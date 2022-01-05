@@ -1,0 +1,115 @@
+//import google fonts
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Open+Sans&family=Playfair+Display&family=Raleway:wght@500&display=swap");
+/*
+300 - Light
+400 - Regular
+500 - Medium
+700 - Bold
+*/
+
+//google fonts
+$Lato: "Lato",
+sans-serif;
+$Opensans: "Open Sans",
+//Lato must be
+sans-serif;
+$Playfairdisplay: "Playfair Display",
+serif;
+$Raleway: "Raleway",
+//Lato must be
+sans-serif;
+
+//import font-icons
+@import "font-icons";
+
+//colors
+$white: #ffffff;
+$black: #000000;
+$grey01: #444444;
+$grey02: #f0f0f0;
+$grey03:#cccccc;
+$grey04: #242424;
+$grey05: #e7e7e7;
+$grey06: #d9d9d9;
+$blue01: #1f3c5f;
+$blue02:#1b3c7c;
+$red01: #b90a25;
+
+html {
+    font-size: 14px;
+}
+
+body {
+    min-width: 320px;
+}
+
+h1 {
+    //font-family:;
+    //font-size:;
+    //color:;
+    margin-bottom: 0;
+}
+
+h2 {
+    font-family: $Lato;
+    font-size: 2.143rem;
+    font-weight: 700;
+    color: $blue01;
+    margin-bottom: 0.833em;
+}
+
+h3 {
+    //font-family: $gudea;
+    font-size: 1rem;
+    //color: $green;
+    margin-bottom: 0;
+}
+
+h4 {
+    //font-family: $gudea;
+    font-size: 1rem;
+    //color: $grey_01;
+    margin-bottom: 0;
+}
+
+p {
+    font-family: $Lato;
+    font-size: 1rem;
+    color: $grey01;
+    margin-bottom: 1rem;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+a {
+    word-wrap: break-word;
+    text-decoration: none;
+    margin-bottom: 0;
+
+    &:hover {
+        color: $red01;
+    }
+
+    transition: color 0.33s;
+}
+
+ul,
+ol {
+    li {
+        margin-bottom: 0;
+    }
+}
+
+span {
+    margin-bottom: 0;
+}
+
+address {
+    margin-bottom: 0;
+}
+
+//top banner height
+$topBannerHeight: 33.333vw;
+/* (height x 100) / 1920 */

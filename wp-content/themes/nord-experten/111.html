@@ -1,0 +1,45 @@
+<div class="row">
+    <div class="col-5 picture">#_EVENTIMAGE</div>
+    <div class="col-7 text">
+        <span class="term">Mittwoch, #_EVENTDATES, #_EVENTTIMES | </span
+        ><a class="author" href="http://localhost/nex/benutzer/#_CONTACTNAME"
+            >#_CONTACTNAME</a
+        >
+        <p class="topic"><span class="title">Thema:</span>#_EVENTNAME</p>
+        <div class="description">#_EVENTNOTES</div>
+        <button
+            type="button"
+            class="reg-button"
+            data-bs-toggle="modal"
+            data-bs-target="#event_id_#_EVENTID"
+        >
+            Jetz anmelden
+        </button>
+    </div>
+</div>
+<div
+    class="modal fade"
+    id="event_id_#_EVENTID"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">
+                    #_EVENTNAME
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body">#_BOOKINGFORM</div>
+        </div>
+    </div>
+</div>
