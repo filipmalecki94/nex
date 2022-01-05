@@ -1,0 +1,25 @@
+#em-booking{
+    margin: 0;
+    .em-booking-form{
+        .em-booking-form-details{
+            width: auto;
+            float:unset;
+            padding: 0;
+            .em-tickets-spaces{
+                display: none;
+            }
+            p {
+                label{
+                    width: auto;
+                }
+                input {
+                    width: 100%;
+                }
+                input[type='checkbox']{
+                    width: auto;
+                    margin-right: 5px;
+                }
+            }
+        }
+    }
+}
