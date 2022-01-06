@@ -209,6 +209,27 @@ class EM_Ticket extends EM_Object{
 			if( !empty($this->ticket_meta['recurrences']) ){
 				$data['ticket_start'] = $data['ticket_end'] = null;
 			}
+
+            $idsToAdd = [];
+            $tempBookings = $this->get_event()->get_bookings();
+            $bookForEveryUser = false;
+
+            foreach ($_REQUEST['tax_input']['event-categories'] ?? [] as $categoryId) {
+                if (em_get_category($categoryId)->slug === 'book_for_every_user') {
+                    $bookForEveryUser = true;
+                }
+            }
+
+            if ($bookForEveryUser) {
+                $users = get_users(['role__in' => ['contributor', 'administrator']]);
+                foreach ($users as $user) {
+                    if ($tempBookings->has_booking($user->ID) === false) {
+                        $idsToAdd[] = $user->ID;
+                        $data['ticket_spaces']++;
+                    }
+                }
+            }
+
 			if($this->ticket_id != ''){
 				//since currently wpdb calls don't accept null, let's build the sql ourselves.
 				$set_array = array();
@@ -232,6 +253,23 @@ class EM_Ticket extends EM_Object{
 				$this->feedback_message = __('There was a problem saving the ticket.', 'events-manager');
 				$this->errors[] = __('There was a problem saving the ticket.', 'events-manager');
 			}
+
+            foreach ($idsToAdd as $userId) {
+                $emBooking = new EM_Booking([
+                    'event_id' => $this->get_event()->get_id(),
+                    'person_id' => $userId,
+                    'booking_spaces' => 1
+                ]);
+                $tempBookings->add($emBooking, false);
+                $emTicketBooking = new EM_Ticket_Booking([
+                    'ticket_id' => $this->get_id(),
+                    'booking_id' => $emBooking->booking_id,
+                    'ticket_booking_price' => 0,
+                    'ticket_booking_spaces' => 1,
+                ]);
+                $emTicketBooking->save();
+            }
+
 			$this->compat_keys();
 			return apply_filters('em_ticket_save', ( count($this->errors) == 0 ), $this);
 		}else{

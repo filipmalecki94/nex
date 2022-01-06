@@ -235,15 +235,16 @@ class EM_Booking extends EM_Object{
 	/**
 	 * Saves the booking into the database, whether a new or existing booking
 	 * @param bool $mail whether or not to email the user and contact people
+	 * @param bool $force_refresh_get_spaces
 	 * @return boolean
 	 */
-	function save($mail = true){
+	function save($mail = true, $force_refresh_get_spaces = true){
 		global $wpdb;
 		$table = EM_BOOKINGS_TABLE;
 		do_action('em_booking_save_pre',$this);
 		if( $this->can_manage() ){
 			//update prices, spaces, person_id
-			$this->get_spaces(true);
+            $this->get_spaces($force_refresh_get_spaces);
 			$this->calculate_price();
 			$this->person_id = (empty($this->person_id)) ? $this->get_person()->ID : $this->person_id;			
 			//Step 1. Save the booking
