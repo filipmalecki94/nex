@@ -34,7 +34,7 @@ class EM_Tickets_Bookings extends EM_Object implements Iterator, Countable {
 	 * Creates an EM_Tickets instance, 
 	 * @param mixed $object
 	 */
-	function __construct( $object = false ){
+	function __construct( $object = false , $get_all = false){
 		global $wpdb;
 		if($object){
 			if( is_object($object) && get_class($object) == "EM_Booking"){
@@ -47,13 +47,17 @@ class EM_Tickets_Bookings extends EM_Object implements Iterator, Countable {
 				$sql = "SELECT * FROM ". EM_TICKETS_BOOKINGS_TABLE ." WHERE booking_id ='{$object}'";
 			}
 			$tickets_bookings = $wpdb->get_results($sql, ARRAY_A);
-			//Get tickets belonging to this tickets booking.
-			foreach ($tickets_bookings as $ticket_booking){
-				$EM_Ticket_Booking = new EM_Ticket_Booking($ticket_booking);
-				$EM_Ticket_Booking->booking = $this->booking; //save some calls
-				$this->tickets_bookings[$ticket_booking['ticket_id']] = $EM_Ticket_Booking;
-			}
-		}
+            //Get tickets belonging to this tickets booking.
+            foreach ($tickets_bookings as $ticket_booking){
+                $EM_Ticket_Booking = new EM_Ticket_Booking($ticket_booking);
+                $EM_Ticket_Booking->booking = $this->booking; //save some calls
+                if($get_all) {
+                    $this->tickets_bookings[$ticket_booking['ticket_id']][] = $EM_Ticket_Booking;
+                } else {
+                    $this->tickets_bookings[$ticket_booking['ticket_id']] = $EM_Ticket_Booking;
+                }
+            }
+        }
 		do_action('em_tickets_bookings',$this, $object);
 	}
 	

@@ -196,7 +196,7 @@ class EM_Ticket extends EM_Object{
 	 * Saves the ticket into the database, whether a new or existing ticket
 	 * @return boolean
 	 */
-	function save(){
+	function save($prevent_add_every_user = false){
 		global $wpdb;
 		$table = EM_TICKETS_TABLE;
 		do_action('em_ticket_save_pre',$this);
@@ -209,14 +209,15 @@ class EM_Ticket extends EM_Object{
 			if( !empty($this->ticket_meta['recurrences']) ){
 				$data['ticket_start'] = $data['ticket_end'] = null;
 			}
-
             $idsToAdd = [];
             $tempBookings = $this->get_event()->get_bookings();
-            $bookForEveryUser = false;
+            $bookForEveryUser = !$prevent_add_every_user;
 
-            foreach ($_REQUEST['tax_input']['event-categories'] ?? [] as $categoryId) {
-                if (em_get_category($categoryId)->slug === 'book_for_every_user') {
-                    $bookForEveryUser = true;
+            if(!$prevent_add_every_user) {
+                foreach ($_REQUEST['tax_input']['event-categories'] ?? [] as $categoryId) {
+                    if (em_get_category($categoryId)->slug === 'book_for_every_user') {
+                        $bookForEveryUser = true;
+                    }
                 }
             }
 
