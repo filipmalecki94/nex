@@ -165,7 +165,10 @@ class EM_Event extends EM_Object{
 	var $event_owner_anonymous;
 	var $event_owner_name;
 	var $event_owner_email;
-	/**
+
+    protected $event_email_before;
+
+    /**
 	 * Previously used to give this object shorter property names for db values (each key has a name) but this is now deprecated, use the db field names as properties. This propertey provides extra info about the db fields.
 	 * @var array
 	 */
@@ -199,6 +202,7 @@ class EM_Event extends EM_Object{
 		'group_id' => array( 'name'=>'group_id', 'type'=>'%d', 'null'=>true ),
 		'event_language' => array( 'type'=>'%s', 'null'=>true ),
 		'event_translation' => array( 'type'=>'%d'),
+		'event_email_before' => array( 'name'=>'event_email_before','type'=>'%s'),
 		'recurrence' => array( 'name'=>'recurrence', 'type'=>'%d', 'null'=>false ), //is this a recurring event template
 		'recurrence_interval' => array( 'name'=>'interval', 'type'=>'%d', 'null'=>true ), //every x day(s)/week(s)/month(s)
 		'recurrence_freq' => array( 'name'=>'freq', 'type'=>'%s', 'null'=>true ), //daily,weekly,monthly?
@@ -484,7 +488,18 @@ class EM_Event extends EM_Object{
 	}
 	
 	public function __isset( $prop ){
-		if( in_array($prop, array('event_start_date', 'event_end_date', 'event_start_time', 'event_end_time', 'event_rsvp_date', 'event_rsvp_time', 'event_start', 'event_end')) ){
+        if (in_array($prop, array(
+                'event_start_date',
+                'event_end_date',
+                'event_start_time',
+                'event_end_time',
+                'event_email_before',
+                'event_rsvp_date',
+                'event_rsvp_time',
+                'event_start',
+                'event_end'
+            )
+        )) {
 			return !empty($this->$prop);
 		}elseif( $prop == 'event_timezone' ){
 			return true;
@@ -523,6 +538,9 @@ class EM_Event extends EM_Object{
 			//load meta data and other related information
 			if( $event_post->post_status != 'auto-draft' ){
 			    $event_meta = $this->get_event_meta($search_by);
+                if(isset($event_meta['_event_email_before'])){
+                    $event_meta['_event_email_before'] = is_string($event_meta['_event_email_before'][0]) ? [unserialize($event_meta['_event_email_before'][0])] : $event_meta['_event_email_before'];
+                }
 			    if( !empty($event_meta['_event_location_type']) ) $this->event_location_type = $event_meta['_event_location_type']; //load this directly so we know further down whether this has an event location type to load
 				//Get custom fields and post meta
 				foreach($event_meta as $event_meta_key => $event_meta_val){
@@ -657,11 +675,22 @@ class EM_Event extends EM_Object{
 		}
 		//Dates and Times - dates ignored if event is recurring being updated (not new) and not specifically chosen to reschedule event
 		$this->event_start = $this->event_end = null;
+        $this->event_email_before = [];
+        $eventEmailBeforeActives = array_filter($_POST, function($v,$k) {
+            return stripos($k,'event_email_before_active_') !== false && $v == 1;
+        },ARRAY_FILTER_USE_BOTH);
 		if( !$this->is_recurring() || (empty($this->event_id) || !empty($_REQUEST['event_reschedule'])) ){
 			//Event Dates
 			$this->event_start_date = ( !empty($_POST['event_start_date']) ) ? wp_kses_data($_POST['event_start_date']) : null;
-			$this->event_end_date = ( !empty($_POST['event_end_date']) ) ? wp_kses_data($_POST['event_end_date']) : $this->event_start_date;
-		}
+            $this->event_end_date = ( !empty($_POST['event_end_date']) ) ? wp_kses_data($_POST['event_end_date']) : $this->event_start_date;
+            $emailBeforeDate = array_filter($_POST, function($e) use ($eventEmailBeforeActives){
+                $temp = str_replace('event_email_before_date_','',$e);
+                return stripos($e,'event_email_before_date_') !== false && isset($eventEmailBeforeActives['event_email_before_active_'.$temp]);
+            },ARRAY_FILTER_USE_KEY);
+            foreach ($emailBeforeDate as $id => $date){
+                $this->event_email_before[str_replace('event_email_before_date_','',$id)]['date'] = wp_kses_data($date);
+            }
+        }
 		//Sort out time
 		$this->event_all_day = ( !empty($_POST['event_all_day']) ) ? 1 : 0;
 		if( $this->event_all_day ){
@@ -669,9 +698,13 @@ class EM_Event extends EM_Object{
 			$this->event_start_time = '00:00:00';
 			$this->event_end_time = '23:59:59';
 		}else{
-			$times_array = array('event_start_time','event_end_time', 'event_rsvp_time');
+            $emailBeforeTime = array_filter($_POST, function($e) use ($eventEmailBeforeActives){
+                $temp = str_replace('event_email_before_time_','',$e);
+                return stripos($e,'event_email_before_time_') !== false && isset($eventEmailBeforeActives['event_email_before_active_'.$temp]);
+            },ARRAY_FILTER_USE_KEY);
+            $times_array = array_merge(array('event_start_time','event_end_time', 'event_rsvp_time'),array_keys($emailBeforeTime));
 		}
-		foreach( $times_array as $timeName ){
+        foreach( $times_array as $timeName ){
 			$match = array();
 			if( !empty($_POST[$timeName]) && preg_match ( '/^([01]\d|[0-9]|2[0-3])(:([0-5]\d))? ?(AM|PM)?$/', $_POST[$timeName], $match ) ){
 				if( empty($match[3]) ) $match[3] = '00';
@@ -681,14 +714,30 @@ class EM_Event extends EM_Object{
 				}elseif( !empty($match[4]) && $match[4] == 'AM' && $match[1] == 12 ){
 					$match[1] = '00';
 				}
-				$this->$timeName = $match[1].":".$match[3].":00";
+                if(stripos($timeName,'event_email_before_time_') !== false) {
+                    $this->event_email_before[str_replace('event_email_before_time_','',$timeName)]['time'] = $match[1].":".$match[3].":00";
+                } else {
+                    $this->$timeName = $match[1].":".$match[3].":00";
+                }
 			}else{
-				$this->$timeName = ($timeName == 'event_start_time') ? "00:00:00":$this->event_start_time;
+                if(stripos($timeName,'event_email_before_time_') !== false) {
+                    $this->event_email_before[str_replace('event_email_before_time_','',$timeName)]['time'] = $match[1].":".$match[3].":00";
+                } else {
+				    $this->$timeName = ($timeName == 'event_start_time') ? "00:00:00":$this->event_start_time;
+                }
 			}
 		}
 		//reset start and end objects so they are recreated with the new dates/times if and when needed
 		$this->start = $this->end = null;
-		
+        foreach (['to','content','active','days','when'] as $item) {
+            $eventEmailBeforeToSet = array_filter($_POST, function($e) use ($item,$eventEmailBeforeActives) {
+                $temp = str_replace('event_email_before_'.$item.'_','',$e);
+                return stripos($e,'event_email_before_'.$item.'_') !== false && isset($eventEmailBeforeActives['event_email_before_active_'.$temp]);
+            },ARRAY_FILTER_USE_KEY);
+            foreach ($eventEmailBeforeToSet as $key => $data) {
+                $this->event_email_before[str_replace('event_email_before_'.$item.'_','',$key)][$item] = $data;
+            }
+        }
 		//Get Location Info
 		if( get_option('dbem_locations_enabled') ){
 			// determine location type, with backward compatibility considerations for those overriding the location forms
@@ -1177,7 +1226,8 @@ class EM_Event extends EM_Object{
 			$this->event_status = ($result) ? $this->event_status:null; //set status at this point, it's either the current status, or if validation fails, null
 			//Save to em_event table
 			$event_array = $this->to_array(true);
-			unset($event_array['event_id']);
+            unset($event_array['event_id']);
+            $event_array['event_email_before'] = self::json_encode($event_array['event_email_before'] ?? []);
 			//decide whether or not event is private at this point
 			$event_array['event_private'] = ( $this->post_status == 'private' ) ? 1:0;
 			//check if event truly exists, meaning the event_id is actually a valid event id
@@ -1538,7 +1588,17 @@ class EM_Event extends EM_Object{
 	public function end( $utc_timezone = false ){
 		return apply_filters('em_event_end', $this->get_datetime('end', $utc_timezone), $this);
 	}
-	
+
+    /**
+     * Returns an EM_DateTime object of the event email before end date/time in local timezone of event
+     * @param bool $utc_timezone Returns EM_DateTime with UTC timezone if set to true, returns local timezone by default.
+     * @return EM_DateTime
+     * @see EM_Event::get_datetime()
+     */
+    public function email_before($utc_timezone = false, $id = 0) {
+        return apply_filters('em_event_email_before',$this->get_datetime('email_before', $utc_timezone, $id), $this);
+    }
+
 	/**
 	 * Returns an EM_DateTime representation of when bookings close in local event timezone. If no valid date defined, event start date/time will be used.
 	 * @param bool $utc_timezone Returns EM_DateTime with UTC timezone if set to true, returns local timezone by default.
@@ -1572,19 +1632,28 @@ class EM_Event extends EM_Object{
 	 * @param bool $utc_timezone Returns EM_DateTime with UTC timezone if set to true, returns local timezone by default. Do not use if EM_DateTime->valid is false. 
 	 * @return EM_DateTime
 	 */
-	public function get_datetime( $when = 'start', $utc_timezone = false ){
-		if( $when != 'start' && $when != 'end') return new EM_DateTime(); //currently only start/end dates are relevant
+	public function get_datetime( $when = 'start', $utc_timezone = false ,$id = 0){
+		if( $when != 'start' && $when != 'end' && $when != 'email_before') return new EM_DateTime(); //currently only start/end dates are relevant
 		//Initialize EM_DateTime if not already initialized, or if previously initialized object is invalid (e.g. draft event with invalid dates being resubmitted)
 		$when_date = 'event_'.$when.'_date';
 		$when_time = 'event_'.$when.'_time';
+        $tempWhenDate = $this->$when_date;
+        $tempWhenTime = $this->$when_time;
+        if($when === 'email_before') {
+            if(!isset($this->event_email_before[$id])) {
+                return new EM_DateTime();
+            }
+            $tempWhenDate = $this->event_email_before[$id]['date'];
+            $tempWhenTime = $this->event_email_before[$id]['time'];
+        }
 		//we take a pass at creating a new datetime object if it's empty, invalid or a different time to the current start date
-		if( empty($this->$when) || !$this->$when->valid ){
-			$when_utc = 'event_'.$when;
+		if( $when === 'email_before' || empty($this->$when) || !$this->$when->valid){
+            $when_utc = 'event_'.$when;
 			$date_regex = '/^\d{4}-\d{2}-\d{2}$/';
-			$valid_time = !empty($this->$when_time) && preg_match('/^\d{2}:\d{2}:\d{2}$/', $this->$when_time);
+			$valid_time = !empty($tempWhenTime) && preg_match('/^\d{2}:\d{2}:\d{2}$/', $tempWhenTime);
 			//If there now is a valid date string for local or UTC timezones, create a new object which will set the valid flag to true by default
-			if( !empty($this->$when_date) && preg_match($date_regex, $this->$when_date) && $valid_time ){
-				$EM_DateTime = new EM_DateTime(trim($this->$when_date.' '.$this->$when_time), $this->event_timezone);
+			if( !empty($tempWhenDate) && preg_match($date_regex, $tempWhenDate) && $valid_time ){
+				$EM_DateTime = new EM_DateTime(trim($tempWhenDate.' '.$tempWhenTime), $this->event_timezone);
 				if( $EM_DateTime->valid && empty($this->$when_utc) ){
 					$EM_DateTime->setTimezone('UTC');
 					$this->$when_utc = $EM_DateTime->format();
@@ -1593,7 +1662,7 @@ class EM_Event extends EM_Object{
 			//If we didn't attempt to create a date above, or it didn't work out, create an invalid date based on time.
 			if( empty($EM_DateTime) || !$EM_DateTime->valid ){
 				//create a new datetime just with the time (if set), fake date and set the valid flag to false
-				$time = $valid_time ? $this->$when_time : '00:00:00';
+				$time = $valid_time ? $tempWhenTime : '00:00:00';
 				$EM_DateTime = new EM_DateTime('1970-01-01 '.$time, $this->event_timezone);
 				$EM_DateTime->valid = false;
 			} 
