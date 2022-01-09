@@ -283,7 +283,8 @@ class EM_Event_Post_Admin{
 			}
 		}
 		if( get_option('dbem_attributes_enabled', true) ){
-			add_meta_box('em-event-attributes', __('Attributes','events-manager'), array('EM_Event_Post_Admin','meta_box_attributes'),EM_POST_TYPE_EVENT, 'normal','default');
+			add_meta_box('em-event-email-before',__('Email Before','events-manager'),array('EM_Event_Post_Admin','meta_box_email_before'),EM_POST_TYPE_EVENT, 'normal','default');
+            add_meta_box('em-event-attributes', __('Attributes','events-manager'), array('EM_Event_Post_Admin','meta_box_attributes'),EM_POST_TYPE_EVENT, 'normal','default');
 		}
 		if( EM_MS_GLOBAL && !is_main_site() && get_option('dbem_categories_enabled') ){
 			add_meta_box('em-event-categories', __('Site Categories','events-manager'), array('EM_Event_Post_Admin','meta_box_ms_categories'),EM_POST_TYPE_EVENT, 'side','low');
@@ -335,6 +336,10 @@ class EM_Event_Post_Admin{
 	
 	public static function meta_box_attributes(){
 		em_locate_template('forms/event/attributes.php',true);
+	}
+
+	public static function meta_box_email_before(){
+		em_locate_template('forms/event/email-before.php',true);
 	}
 	
 	public static function meta_box_location(){
