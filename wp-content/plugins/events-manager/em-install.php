@@ -171,6 +171,7 @@ function em_create_events_table() {
 		group_id bigint(20) unsigned NULL DEFAULT NULL,
 		event_language varchar(14) NULL DEFAULT NULL,
 		event_translation tinyint(1) unsigned NOT NULL DEFAULT 0,
+		event_email_before text NULL DEFAULT NULL,
 		PRIMARY KEY  (event_id)
 		) DEFAULT CHARSET=utf8 ;";
 
