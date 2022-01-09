@@ -16,6 +16,9 @@ $button_cancel = get_option('dbem_booking_button_msg_cancel');
 if( is_user_logged_in() ){ //only show this to logged in users
 	ob_start();
 	$EM_Booking = $EM_Event->get_bookings()->has_booking();
+    ?>
+    <button type="button" class="reg-button">
+    <?php
 	if( is_object($EM_Booking) && $EM_Booking->booking_status != 3 && get_option('dbem_bookings_user_cancellation') ){
 		?><a id="em-cancel-button_<?php echo $EM_Booking->booking_id; ?>_<?php echo wp_create_nonce('booking_cancel'); ?>" class="button em-cancel-button" href="#"><?php echo $button_cancel; ?></a><?php
 	}elseif( $EM_Event->get_bookings()->is_open() ){
@@ -29,6 +32,15 @@ if( is_user_logged_in() ){ //only show this to logged in users
 	}else{
 		?><span class="em-closed-button"><?php echo $button_closed ?></span><?php
 	}
+    ?>
+    </button>
+    <?php
 	echo apply_filters( 'em_booking_button', ob_get_clean(), $EM_Event );
-}; 
+} else {
+    ?>
+    <button type="button" class="reg-button" data-bs-toggle="modal" data-bs-target="#event_id_<?php echo $EM_Event->event_id; ?>">
+        Jetzt Anmelden
+    </button>
+    <?php
+}
 ?>
