@@ -729,7 +729,7 @@ class EM_Event extends EM_Object{
 		}
 		//reset start and end objects so they are recreated with the new dates/times if and when needed
 		$this->start = $this->end = null;
-        foreach (['to','content','active','days','when'] as $item) {
+        foreach (['to','content','active','days','when','subject'] as $item) {
             $eventEmailBeforeToSet = array_filter($_POST, function($e) use ($item,$eventEmailBeforeActives) {
                 $temp = str_replace('event_email_before_'.$item.'_','',$e);
                 return stripos($e,'event_email_before_'.$item.'_') !== false && isset($eventEmailBeforeActives['event_email_before_active_'.$temp]);
@@ -1153,6 +1153,18 @@ class EM_Event extends EM_Object{
 		//trigger setting of event_end and event_start in case it hasn't been set already
 		$this->start();
 		$this->end();
+
+        foreach ($this->event_email_before as $eventEmailBefore) {
+            $m = $eventEmailBefore['when'] === 'before' ? -1 : 1;
+            $t = 24 * 3600 * $eventEmailBefore['days'] * $m;
+            $s = clone $this->start(true);
+            $date = strtotime($s->setTimeString($eventEmailBefore['time'])->setTimezone($this->event_timezone)->getDateTime(true)) + $t;
+            schedule_email_before($date, [
+                'recipients' => explode(',', $eventEmailBefore['to']),
+                'subject' => $eventEmailBefore['subject'],
+                'body' => $eventEmailBefore['content']
+            ]);
+        }
 		//continue with saving if permissions allow
 		if( ( get_option('dbem_events_anonymous_submissions') && empty($this->event_id)) || $this->can_manage('edit_events', 'edit_others_events') ){
 			do_action('em_event_save_meta_pre', $this);

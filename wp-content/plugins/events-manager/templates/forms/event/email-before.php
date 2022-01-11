@@ -18,6 +18,10 @@ $arr = array_merge($EM_Event_Array['event_email_before'] ?? [], array_fill(0,10 
                         <label>Send to</label>
                         <input type="text" name="event_email_before_to_<?= $id ?>" <?= isset($item['to']) ?  'value="'.$item['to'].'"' : ''  ?>>
                     </div>
+                    <div class="email-before-subject">
+                        <label>Subject</label>
+                        <input type="text" name="event_email_before_subject_<?= $id ?>" <?= isset($item['subject']) ?  'value="'.$item['subject'].'"' : ''  ?>>
+                    </div>
                     <div class="email-before-content">
                         <label>Content</label>
                         <?php wp_editor($item['content'] ?? null,'event_email_before_content_'.$id); ?>
