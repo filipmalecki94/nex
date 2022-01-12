@@ -243,13 +243,12 @@ function showBeforeMore($fullText){
     }
 }
 function schedule_email_before(int $datetime, array $args) {
-    if (!wp_next_scheduled('send_email_before')) {
-        wp_schedule_single_event($datetime, 'send_email_before', $args);
-    }
+    wp_schedule_single_event($datetime, 'send_email_before', $args);
 }
 function send_email_before(array $recipients, string $subject, string $body) {
     $m = new EM_Mailer();
     foreach ($recipients as $recipient) {
-        $m->send($subject,$body,$recipient);
+        $m->send($subject, $body, $recipient);
     }
 }
+add_action('send_email_before','send_email_before',10,3);
