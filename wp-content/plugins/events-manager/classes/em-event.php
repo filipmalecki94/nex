@@ -715,13 +715,13 @@ class EM_Event extends EM_Object{
 					$match[1] = '00';
 				}
                 if(stripos($timeName,'event_email_before_time_') !== false) {
-                    $this->event_email_before[str_replace('event_email_before_time_','',$timeName)]['time'] = $match[1].":".$match[3].":00";
+                    $this->event_email_before[str_replace('event_email_before_time_','',$timeName)]['time'] = ($match[1] ?? '00').":".($match[3] ?? '00').":00";
                 } else {
                     $this->$timeName = $match[1].":".$match[3].":00";
                 }
 			}else{
                 if(stripos($timeName,'event_email_before_time_') !== false) {
-                    $this->event_email_before[str_replace('event_email_before_time_','',$timeName)]['time'] = $match[1].":".$match[3].":00";
+                    $this->event_email_before[str_replace('event_email_before_time_','',$timeName)]['time'] = ($match[1] ?? '00').":".($match[3] ?? '00').":00";
                 } else {
 				    $this->$timeName = ($timeName == 'event_start_time') ? "00:00:00":$this->event_start_time;
                 }
@@ -1156,7 +1156,7 @@ class EM_Event extends EM_Object{
 
         foreach ($this->event_email_before as $eventEmailBefore) {
             $m = $eventEmailBefore['when'] === 'before' ? -1 : 1;
-            $t = 24 * 3600 * $eventEmailBefore['days'] * $m;
+            $t = 24 * 3600 * ((int)$eventEmailBefore['days']) * $m;
             $s = clone $this->start(true);
             $date = strtotime($s->setTimeString($eventEmailBefore['time'])->setTimezone($this->event_timezone)->getDateTime(true)) + $t;
             schedule_email_before($date, [
@@ -1652,7 +1652,7 @@ class EM_Event extends EM_Object{
         $tempWhenDate = $this->$when_date;
         $tempWhenTime = $this->$when_time;
         if($when === 'email_before') {
-            if(!isset($this->event_email_before[$id])) {
+            if(!isset($this->event_email_before[$id],$this->event_email_before[$id]['date'],$this->event_email_before[$id]['time'])) {
                 return new EM_DateTime();
             }
             $tempWhenDate = $this->event_email_before[$id]['date'];
