@@ -1154,16 +1154,21 @@ class EM_Event extends EM_Object{
 		$this->start();
 		$this->end();
 
-        foreach ($this->event_email_before as $eventEmailBefore) {
+        delete_crons_by_event_id((int)$this->event_id);
+        foreach ($this->event_email_before as $id => $eventEmailBefore) {
             $m = $eventEmailBefore['when'] === 'before' ? -1 : 1;
             $t = 24 * 3600 * ((int)$eventEmailBefore['days']) * $m;
             $s = clone $this->start(true);
             $date = strtotime($s->setTimeString($eventEmailBefore['time'])->setTimezone($this->event_timezone)->getDateTime(true)) + $t;
-            schedule_email_before($date, [
-                'recipients' => explode(',', $eventEmailBefore['to']),
-                'subject' => $eventEmailBefore['subject'],
-                'body' => $eventEmailBefore['content']
-            ]);
+            schedule_email_before(
+                $date,
+                (int)$this->event_id,
+                [
+                    'recipients' => explode(',', $eventEmailBefore['to']),
+                    'subject' => $eventEmailBefore['subject'],
+                    'body' => $eventEmailBefore['content']
+                ]
+            );
         }
 		//continue with saving if permissions allow
 		if( ( get_option('dbem_events_anonymous_submissions') && empty($this->event_id)) || $this->can_manage('edit_events', 'edit_others_events') ){

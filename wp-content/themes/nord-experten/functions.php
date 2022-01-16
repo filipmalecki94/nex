@@ -242,13 +242,35 @@ function showBeforeMore($fullText){
         print $fullText;
     }
 }
-function schedule_email_before(int $datetime, array $args) {
-    wp_schedule_single_event($datetime, 'send_email_before', $args);
+
+
+function schedule_email_before(int $datetime, int $eventId, array $args) {
+    wp_schedule_single_event($datetime, 'send_email_before', array_merge($args,['event_id' => $eventId]));
 }
-function send_email_before(array $recipients, string $subject, string $body) {
+
+function delete_crons_by_event_id(int $eventId)
+{
+    $crons = _get_cron_array();
+
+    $cronsToSet = [];
+    foreach ( $crons as $timestamp => $cron ) {
+        if(isset($cron['send_email_before'])) {
+            foreach ($cron['send_email_before'] as $md5key => $sendEmailBefore) {
+                if($sendEmailBefore['args']['event_id'] !== $eventId) {
+                    $cronsToSet[$timestamp] = $cron;
+                }
+            }
+        } else {
+            $cronsToSet[$timestamp] = $cron;
+        }
+    }
+    _set_cron_array( $cronsToSet, true );
+}
+
+function send_email_before(int $eventId, array $recipients, string $subject, string $body) {
     $m = new EM_Mailer();
     foreach ($recipients as $recipient) {
         $m->send($subject, $body, $recipient);
     }
 }
-add_action('send_email_before','send_email_before',10,3);
+add_action('send_email_before','send_email_before',10,4);
