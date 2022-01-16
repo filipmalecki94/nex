@@ -7,13 +7,13 @@ $arr = array_merge($EM_Event_Array['event_email_before'] ?? [], array_fill(0,10 
 ?>
     <div class="email-before-container">
         <?php foreach ($arr as $id => $item): ?>
-            <div class="event-email-before" id="email-before_<?= $id ?>" <?php if(!(($arr[$id-1]['active'] ?? false) || $id == 0)){echo 'style="display: none"';}?>>
+            <div class="event-email-before" id="email-before_<?= $id ?>" <?php if(!(($arr[$id-1]['active'] ?? false) || $id === 0)){echo 'style="display: none"';}?>>
                 <div class="event-email-before-header" style="display: flex;justify-content: space-between;align-items: center;">
                     <h4>Email Before #<?= ($id + 1) ?></h4>
-                    <a class="enable-event-email-before" <?php if(((bool)($arr[$id+1]['active'] ?? false))){echo 'style="display: none"';}?>><?= $id !== 0 && (!($item['active'] ?? 0)) ? 'Enable' : 'Disable'?></a>
+                    <a class="enable-event-email-before button button-primary button-large" ><?= ((!($item['active'] ?? 0)) )? 'Enable' : 'Disable'?></a>
                 </div>
-                <div <?php if($id !== 0 && (!($item['active'] ?? 0))) {echo 'style="display: none"';} ?> class="event-email-before-wrapper">
-                    <input type="hidden" name="event_email_before_active_<?= $id ?>" <?= isset($item['active']) ?  'value="'.(empty($item['active'])?(int)($id === 0):$item['active']).'"' : 'value="'.($id === 0).'"'  ?>>
+                <div <?php if((!($item['active'] ?? 0))) {echo 'style="display: none"';} ?> class="event-email-before-wrapper">
+                    <input type="hidden" name="event_email_before_active_<?= $id ?>" <?= isset($item['active']) ?  'value="'.(empty($item['active'])?(int)($id === 0):$item['active']).'"' : 'value="0"'  ?>>
                     <div class="email-before-to">
                         <label>Send to</label>
                         <input type="text" name="event_email_before_to_<?= $id ?>" <?= isset($item['to']) ?  'value="'.$item['to'].'"' : ''  ?>>
@@ -56,7 +56,8 @@ $arr = array_merge($EM_Event_Array['event_email_before'] ?? [], array_fill(0,10 
                     </span>
                     <input class="em-time-input em-time-start" type="text" size="8" maxlength="8"
                            name="event_email_before_time_<?= $id ?>"
-                        <?= isset($item['time']) ?  'value="'.$EM_Event->email_before(false, $id)->format($hours_format).'"' : ''  ?>/>
+                            <?= isset($item['time']) ?  'value="'.$EM_Event->email_before(false, $id)->format($hours_format).'"' : ''  ?>
+                    />
                 </div>
             </div>
         <?php endforeach; ?>
@@ -68,14 +69,10 @@ $arr = array_merge($EM_Event_Array['event_email_before'] ?? [], array_fill(0,10 
                     $input = $eventEmailBeforeWrapper.find('input[name="event_email_before_active_'+id);
 
                 if($input.val(1-$input.val()).val() == 1) {
-                    jQuery(this).closest('.email-before-container').find('#email-before_'+(id-1)).find('.enable-event-email-before').hide();
-                    jQuery(this).closest('.email-before-container').find('#email-before_'+(id+1)).find('.enable-event-email-before').show();
                     jQuery(this).closest('.email-before-container').find('#email-before_'+(id+1)).show();
                     jQuery(this).text('Disable');
                     $eventEmailBeforeWrapper.show();
                 } else {
-                    jQuery(this).closest('.email-before-container').find('#email-before_'+(id-1)).find('.enable-event-email-before').show();
-                    jQuery(this).closest('.email-before-container').find('#email-before_'+(id+1)).hide();
                     jQuery(this).text('Enable');
                     $eventEmailBeforeWrapper.hide();
                 }
