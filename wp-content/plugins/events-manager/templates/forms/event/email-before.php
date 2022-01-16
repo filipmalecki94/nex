@@ -56,7 +56,7 @@ $arr = array_merge($EM_Event_Array['event_email_before'] ?? [], array_fill(0,10 
                     </span>
                     <input class="em-time-input em-time-start" type="text" size="8" maxlength="8"
                            name="event_email_before_time_<?= $id ?>"
-                            <?= isset($item['time']) ?  'value="'.$EM_Event->email_before(false, $id)->format($hours_format).'"' : ''  ?>
+                            <?= isset($item['time']) ?  'value="'.isset($item['time']).'"' : ''  ?>
                     />
                 </div>
             </div>
