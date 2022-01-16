@@ -1153,22 +1153,23 @@ class EM_Event extends EM_Object{
 		//trigger setting of event_end and event_start in case it hasn't been set already
 		$this->start();
 		$this->end();
-
-        delete_crons_by_event_id((int)$this->event_id);
-        foreach ($this->event_email_before as $id => $eventEmailBefore) {
-            $m = $eventEmailBefore['when'] === 'before' ? -1 : 1;
-            $t = 24 * 3600 * ((int)$eventEmailBefore['days']) * $m;
-            $s = clone $this->start(true);
-            $date = strtotime($s->setTimeString($eventEmailBefore['time'])->setTimezone($this->event_timezone)->getDateTime(true)) + $t;
-            schedule_email_before(
-                $date,
-                (int)$this->event_id,
-                [
-                    'recipients' => explode(',', $eventEmailBefore['to']),
-                    'subject' => $eventEmailBefore['subject'],
-                    'body' => $eventEmailBefore['content']
-                ]
-            );
+        if(!is_null($this->event_id) && !$this->recurrence) {
+            delete_crons_by_event_id((int)$this->event_id);
+            foreach ($this->event_email_before as $id => $eventEmailBefore) {
+                $m = $eventEmailBefore['when'] === 'before' ? -1 : 1;
+                $t = 24 * 3600 * ((int)$eventEmailBefore['days']) * $m;
+                $s = clone $this->start(true);
+                $date = strtotime($s->setTimeString($eventEmailBefore['time'])->setTimezone($this->event_timezone)->getDateTime(true)) + $t;
+                schedule_email_before(
+                    $date,
+                    (int)$this->event_id,
+                    [
+                        'recipients' => explode(',', $eventEmailBefore['to']),
+                        'subject' => $eventEmailBefore['subject'],
+                        'body' => $eventEmailBefore['content']
+                    ]
+                );
+            }
         }
 		//continue with saving if permissions allow
 		if( ( get_option('dbem_events_anonymous_submissions') && empty($this->event_id)) || $this->can_manage('edit_events', 'edit_others_events') ){
@@ -1472,6 +1473,7 @@ class EM_Event extends EM_Object{
 		global $wpdb;
 		$result = false;
 		if( $this->can_manage('delete_events', 'delete_others_events') ){
+            delete_crons_by_event_id((int)$this->event_id);
 			do_action('em_event_delete_meta_event_pre', $this);
 			$result = $wpdb->query ( $wpdb->prepare("DELETE FROM ". EM_EVENTS_TABLE ." WHERE event_id=%d", $this->event_id) );
 			if( $result !== false ){
@@ -3055,6 +3057,24 @@ class EM_Event extends EM_Object{
 					 		foreach($meta_fields as $meta_key => $meta_val){
 					 			$meta_inserts[] = $wpdb->prepare("(%d, %s, %s)", array($post_id, $meta_key, $meta_val));
 					 		}
+
+                            $wpdb->update(EM_EVENTS_TABLE, ['event_email_before' => self::json_encode($event['event_email_before'])], array('event_id' => $event_id));
+                            delete_crons_by_event_id((int)$event_id);
+                            foreach ($event['event_email_before'] ?? [] as $id => $eventEmailBefore) {
+                                $m = $eventEmailBefore['when'] === 'before' ? -1 : 1;
+                                $t = 24 * 3600 * ((int)$eventEmailBefore['days']) * $m;
+                                $date = strtotime($event['event_start_date'] . ' ' . $eventEmailBefore['time']) + $t;
+                                schedule_email_before(
+                                    $date,
+                                    (int)$event_id,
+                                    [
+                                        'recipients' => explode(',', $eventEmailBefore['to']),
+                                        'subject' => $eventEmailBefore['subject'],
+                                        'body' => $eventEmailBefore['content']
+                                    ]
+                                );
+                            }
+
 						}else{
 							$event_saves[] = false;
 						}
@@ -3119,8 +3139,29 @@ class EM_Event extends EM_Object{
 				 		$meta_fields['_start_ts'] = $start_timestamp;
 				 		$meta_fields['_end_ts'] = $end_timestamp;
 					}
-			 		//overwrite event and post tables
+
+                    delete_crons_by_event_id((int)$event_array['event_id']);
+                    foreach ($event['event_email_before'] ?? [] as $id => $eventEmailBefore) {
+                        if(!isset($event_array['recurrence_id'])){
+                            continue;
+                        }
+                        $m = $eventEmailBefore['when'] === 'before' ? -1 : 1;
+                        $t = 24 * 3600 * ((int)$eventEmailBefore['days']) * $m;
+                        $date = strtotime($event_array['event_start_date'] . ' ' . $eventEmailBefore['time']) + $t;
+                        schedule_email_before(
+                            $date,
+                            (int)$event_array['event_id'],
+                            [
+                                'recipients' => explode(',', $eventEmailBefore['to']),
+                                'subject' => $eventEmailBefore['subject'],
+                                'body' => $eventEmailBefore['content']
+                            ]
+                        );
+                    }
+
+                    //overwrite event and post tables
 			 		$wpdb->update(EM_EVENTS_TABLE, $event, array('event_id' => $event_array['event_id']));
+                    $wpdb->update(EM_EVENTS_TABLE, ['event_email_before' => self::json_encode($event['event_email_before'])], array('event_id' => $event_array['event_id']));
 			 		$wpdb->update($wpdb->posts, $post_fields, array('ID' => $event_array['post_id']));
 			 		//save meta field data for insertion in one go
 			 		foreach($meta_fields as $meta_key => $meta_val){
