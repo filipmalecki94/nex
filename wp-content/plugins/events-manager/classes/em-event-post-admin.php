@@ -515,6 +515,7 @@ class EM_Event_Recurring_Post_Admin{
 			add_meta_box('em-event-bookings', __('Bookings/Registration','events-manager'), array('EM_Event_Post_Admin','meta_box_bookings'),'event-recurring', 'normal','high');
 		}
 		if( get_option('dbem_attributes_enabled') ){
+            add_meta_box('em-event-email-before',__('Email Before','events-manager'),array('EM_Event_Post_Admin','meta_box_email_before'),'event-recurring', 'normal','default');
 			add_meta_box('em-event-attributes', __('Attributes','events-manager'), array('EM_Event_Post_Admin','meta_box_attributes'),'event-recurring', 'normal','default');
 		}
 		if( EM_MS_GLOBAL && !is_main_site() && get_option('dbem_categories_enabled') ){
