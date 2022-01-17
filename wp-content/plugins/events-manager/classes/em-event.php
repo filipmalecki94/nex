@@ -661,7 +661,7 @@ class EM_Event extends EM_Object{
 	 */
 	function get_post_meta(){
 		do_action('em_event_get_post_meta_pre', $this);
-		
+
 		//Check if this is recurring or not early on so we can take appropriate action further down
 		if( !empty($_POST['recurring']) ){
 			$this->recurrence = 1;
@@ -729,7 +729,7 @@ class EM_Event extends EM_Object{
 		}
 		//reset start and end objects so they are recreated with the new dates/times if and when needed
 		$this->start = $this->end = null;
-        foreach (['to','content','active','days','when','subject'] as $item) {
+        foreach (['to','content','active','days','when','subject','pdf_attach','csv_attach'] as $item) {
             $eventEmailBeforeToSet = array_filter($_POST, function($e) use ($item,$eventEmailBeforeActives) {
                 $temp = str_replace('event_email_before_'.$item.'_','',$e);
                 return stripos($e,'event_email_before_'.$item.'_') !== false && isset($eventEmailBeforeActives['event_email_before_active_'.$temp]);
@@ -777,7 +777,7 @@ class EM_Event extends EM_Object{
 			$this->location_id = 0;
 			$this->event_location_type = null;
 		}
-		
+
 		//Bookings
 		$can_manage_bookings = $this->can_manage('manage_bookings','manage_others_bookings');
 		$preview_autosave = is_admin() && !empty($_REQUEST['_emnonce']) && !empty($_REQUEST['wp-preview']) && $_REQUEST['wp-preview'] == 'dopreview'; //we shouldn't save new data during a preview auto-save
@@ -817,7 +817,7 @@ class EM_Event extends EM_Object{
 			$this->event_rsvp = 0;
 			$this->event_rsvp_date = $this->event_rsvp_time = $this->rsvp_end = null;
 		}
-		
+
 		//Sort out event attributes - note that custom post meta now also gets inserted here automatically (and is overwritten by these attributes)
 		if(get_option('dbem_attributes_enabled')){
 			global $allowedtags;
@@ -840,14 +840,14 @@ class EM_Event extends EM_Object{
 				}
 			}
 		}
-		
+
 		//group id
 		$this->group_id = (!empty($_POST['group_id']) && is_numeric($_POST['group_id'])) ? absint($_POST['group_id']):0;
-		
+
 		//Recurrence data
 		if( $this->is_recurring() ){
 			$this->recurrence = 1; //just in case
-			
+
 			//If event is new or reschedule is requested, then proceed with new time pattern
 			if( empty($this->event_id) || !empty($_REQUEST['event_reschedule']) ){
 				//dates and time schedules of events
@@ -863,12 +863,12 @@ class EM_Event extends EM_Object{
 				$this->recurrence_byweekno = ( !empty($_POST['recurrence_byweekno']) ) ? wp_kses_data($_POST['recurrence_byweekno']):'';
 				$this->recurrence_days = ( !empty($_POST['recurrence_days']) && is_numeric($_POST['recurrence_days']) ) ? (int) $_POST['recurrence_days']:0;
 			}
-			
+
 			//here we do a comparison between new and old event data to see if we are to reschedule events or recreate bookings
 			if( $this->event_id ){ //only needed if this is an existing event needing rescheduling/recreation
 				//Get original recurring event so we can tell whether event recurrences or bookings will be recreated or just modified
 				$EM_Event = new EM_Event($this->event_id);
-				
+
 				//first check event times
 				$recurring_event_dates = array(
 						'event_start_date' => $EM_Event->event_start_date,
@@ -885,7 +885,7 @@ class EM_Event extends EM_Object{
 						$this->recurring_reschedule = true; //something changed, so we reschedule
 					}
 				}
-				
+
 				//now check tickets if we don't already have to reschedule
 				if( !$this->recurring_reschedule && $this->event_rsvp ){
 					//@TODO - ideally tickets could be independent of events, it'd make life easier here for comparison and editing without rescheduling

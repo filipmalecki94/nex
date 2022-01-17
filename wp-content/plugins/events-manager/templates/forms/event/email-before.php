@@ -18,9 +18,17 @@ $arr = array_merge($EM_Event_Array['event_email_before'] ?? [], array_fill(0,10 
                         <label>Send to</label>
                         <input type="text" name="event_email_before_to_<?= $id ?>" <?= isset($item['to']) ?  'value="'.$item['to'].'"' : ''  ?>>
                     </div>
-                    <div class="email-before-subject">
+                    <div class="email-before-subject" style="margin-top:10px;">
                         <label>Subject</label>
                         <input type="text" name="event_email_before_subject_<?= $id ?>" <?= isset($item['subject']) ?  'value="'.$item['subject'].'"' : ''  ?>>
+                    </div>
+                    <div class="email-before-subject" style="margin-top:10px;">
+                        <label>Attach booking list</label>
+                        <br>
+                        <label for="event_email_before_pdf_attach_<?= $id ?>">PDF</label>
+                        <input type="checkbox" value="1" name="event_email_before_pdf_attach_<?= $id ?>" <?= isset($item['pdf_attach']) && $item['pdf_attach'] == 1 ?  'checked' : null  ?>>
+                        <label for="event_email_before_csv_attach_<?= $id ?>">CSV</label>
+                        <input type="checkbox" value="1" name="event_email_before_csv_attach_<?= $id ?>" <?= isset($item['csv_attach']) && $item['csv_attach'] == 1 ?  'checked' : null  ?>>
                     </div>
                     <div class="email-before-content">
                         <label>Content</label>
