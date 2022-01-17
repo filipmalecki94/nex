@@ -288,6 +288,7 @@ function em_create_bookings_table() {
  		booking_tax_rate decimal(7,4) NULL DEFAULT NULL,
  		booking_taxes decimal(14,4) NULL DEFAULT NULL,
 		booking_meta LONGTEXT NULL,
+		booking_present TINYINT DEFAULT 0 NOT NULL;
 		PRIMARY KEY  (booking_id)
 		) DEFAULT CHARSET=utf8 ;";
 	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
