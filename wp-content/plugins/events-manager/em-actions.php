@@ -266,7 +266,7 @@ function em_init_actions() {
 	}
 	
 	//Booking Actions
-	if( !empty($_REQUEST['action']) && substr($_REQUEST['action'],0,7) == 'booking' && (is_user_logged_in() || ($_REQUEST['action'] == 'booking_add' && get_option('dbem_bookings_anonymous'))) ){
+	if( !empty($_REQUEST['action']) && (substr($_REQUEST['action'],0,7) == 'booking' || $_REQUEST['action'] == 'present_save') && (is_user_logged_in() || ($_REQUEST['action'] == 'booking_add' && get_option('dbem_bookings_anonymous'))) ){
 		global $EM_Event, $EM_Booking, $EM_Person;
 		//Load the booking object, with saved booking if requested
 		$EM_Booking = ( !empty($_REQUEST['booking_id']) ) ? em_get_booking($_REQUEST['booking_id']) : em_get_booking();
@@ -279,7 +279,17 @@ function em_init_actions() {
 		$allowed_actions = array('bookings_approve'=>'approve','bookings_reject'=>'reject','bookings_unapprove'=>'unapprove', 'bookings_delete'=>'delete');
 		$result = false;
 		$feedback = '';
-		if ( $_REQUEST['action'] == 'booking_add') {
+        if($_REQUEST['action'] == 'present_save') {
+            $idForPresent = array_keys($_REQUEST['fields'] ?? []);
+            foreach ($EM_Event->get_bookings()->bookings as $booking) {
+                if(in_array($booking->booking_id, $idForPresent)) {
+                    $booking->booking_present = true;
+                } else {
+                    $booking->booking_present = false;
+                }
+                $booking->save(false);
+            }
+        } elseif ( $_REQUEST['action'] == 'booking_add') {
 			//ADD/EDIT Booking
 			ob_start();
 			if( (!defined('WP_CACHE') || !WP_CACHE) && !isset($GLOBALS["wp_fastest_cache"]) ) em_verify_nonce('booking_add');
