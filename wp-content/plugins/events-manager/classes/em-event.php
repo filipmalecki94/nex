@@ -1993,7 +1993,7 @@ class EM_Event extends EM_Object{
 	 * @param string $target
 	 * @return string
 	 */	
-	function output($format, $target="html") {	
+	function output($format, $target="html") {
 		global $wpdb;
 		//$format = do_shortcode($format); //parse shortcode first, so that formats within shortcodes are parsed properly, however uncommenting this will break shortcode containing placeholders for arguments
 	 	$event_string = $format;
@@ -2484,6 +2484,14 @@ class EM_Event extends EM_Object{
 						$replace = ob_get_clean();
 					}
 					break;
+                case '#_BOOKINGPRESENT':
+                    if( get_option('dbem_rsvp_enabled')){
+                        ob_start();
+                        $template = em_locate_template('placeholders/bookings-event-present.php', true, array('EM_Event'=>$this));
+                        EM_Bookings::enqueue_js();
+                        $replace = ob_get_clean();
+                    }
+                    break;
 				case '#_EVENTPRICERANGEALL':				    
 				    $show_all_ticket_prices = true; //continues below
 				case '#_EVENTPRICERANGE':

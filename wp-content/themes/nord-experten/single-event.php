@@ -22,6 +22,7 @@ get_header(); ?>
 						</div>
 					</diw>
 				</div>
+                <?php echo do_shortcode('[event]#_BOOKINGPRESENT[/event]'); ?>
 			</div>
 		</main>
 

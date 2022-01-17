@@ -42,7 +42,8 @@ class EM_Bookings extends EM_Object implements Iterator{
 	protected $booked_spaces;
 	protected $pending_spaces;
 	protected $available_spaces;
-	
+	protected $present_spaces;
+
 	/**
 	 * Creates an EM_Bookings instance, currently accepts an EM_Event object (gets all bookings for that event) or array of any EM_Booking objects, which can be manipulated in bulk with helper functions.
 	 * @param EM_Event $event
@@ -461,6 +462,15 @@ class EM_Bookings extends EM_Object implements Iterator{
 		}
 		return apply_filters('em_bookings_get_pending_spaces', $this->pending_spaces, $this, $force_refresh);
 	}
+
+    function get_present_spaces($force_refresh = false) {
+        global $wpdb;
+        if( $this->present_spaces === null || $force_refresh ){
+            $sql = 'SELECT COUNT(booking_present) FROM '.EM_BOOKINGS_TABLE. ' WHERE booking_status = 1 AND event_id='.absint($this->event_id);
+            $this->present_spaces = $wpdb->get_var($sql);
+        }
+        return apply_filters('em_bookings_get_present_spaces', $this->present_spaces, $this, $force_refresh);
+    }
 	
 	/**
 	 * Gets booking objects (not spaces). If booking approval is enabled, only the number of approved bookings will be shown.
