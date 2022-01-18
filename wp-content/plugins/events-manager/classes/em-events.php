@@ -316,7 +316,8 @@ $limit $offset";
 		
 		if ( $events_count > 0 ) {
 			$events = apply_filters('em_events_output_events', $events);
-			foreach ( $events as $EM_Event ) {
+            /** @var EM_Event $EM_Event */
+            foreach ( $events as $EM_Event ) {
 				$output .= $EM_Event->output($format);
 			} 
 			//Add headers and footers to output

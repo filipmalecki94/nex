@@ -270,3 +270,231 @@ function showBeforeMore($fullText){
         print $fullText;
     }
 }
+
+
+function schedule_email_before(int $datetime, int $eventId, array $args) {
+    wp_schedule_single_event($datetime, 'send_email_before', array_merge($args,['event_id' => $eventId]));
+}
+
+function delete_crons_by_event_id(int $eventId)
+{
+    $crons = _get_cron_array();
+
+    $cronsToSet = [];
+    foreach ( $crons as $timestamp => $cron ) {
+        if(isset($cron['send_email_before'])) {
+            foreach ($cron['send_email_before'] as $md5key => $sendEmailBefore) {
+                if($sendEmailBefore['args']['event_id'] !== $eventId) {
+                    $cronsToSet[$timestamp] = $cron;
+                }
+            }
+        } else {
+            $cronsToSet[$timestamp] = $cron;
+        }
+    }
+    _set_cron_array( $cronsToSet, true );
+}
+
+function send_email_before(int $eventId, array $recipients, string $subject, string $body, array $attachments = []) {
+    $m = new EM_Mailer();
+    $att = [];
+
+    if ($attachments['summary']['csv'] ?? false) {
+        $att[] = generate_summary_csv($eventId);
+    }
+
+    if ($attachments['booking_list']['csv'] ?? false) {
+        $att[] = generate_booking_list_csv($eventId);
+    }
+
+    if ($attachments['booking_list']['pdf'] ?? false) {
+        $att[] = generate_booking_list_pdf('booking_list_'.$eventId, $eventId);
+    }
+
+    foreach ($recipients as $recipient) {
+        $m->send($subject, $body, $recipient, $att);
+    }
+}
+add_action('send_email_before','send_email_before',10,5);
+
+function generate_summary_csv(int $eventId): string
+{
+    global $wpdb;
+
+    $data = [[
+        'Event ID',
+        'Person ID',
+        'Name',
+        'Date',
+        'Registered',
+        'Present',
+    ]];
+
+    $EM_Event = em_get_event($eventId);
+    $firstDayMonth = date('Y-m-01', $EM_Event->start);
+    $lastDayMonth = date('Y-m-t', $EM_Event->start);
+
+    $Table_Name   = $wpdb->prefix.'em_bookings';
+    $sql_query    = $wpdb->prepare("
+                        SELECT 
+                               bookings.event_id, 
+                               bookings.person_id, 
+                               users.display_name, 
+                               events.event_start, 
+                               IF(bookings.person_id > 0, TRUE, FALSE) as registered, 
+                               bookings.booking_present,
+                               bookings.booking_status
+                        FROM nex_em_bookings as bookings
+                        LEFT JOIN nex_em_events events on bookings.event_id = events.event_id
+                        LEFT JOIN nex_users users on bookings.person_id = users.ID
+                        WHERE events.event_start >= %s AND events.event_start <= %s
+                        ORDER BY event_start, booking_status",
+        $firstDayMonth, $lastDayMonth);
+    $rows = $wpdb->get_results($sql_query, ARRAY_A);
+
+    $approved = [];
+    foreach ($rows as $row) {
+        if ($row['booking_status'] == 1 && !isset($approved[$row['event_id']][$row['person_id']]) ) {
+            $approved[$row['event_id']][$row['person_id']] = [
+                'event_id' => $row['event_id'],
+                'person_id' => $row['person_id'],
+                'name' => $row['display_name'],
+                'date' => $row['event_start'],
+                'registered' => $row['registered'],
+                'present' => $row['booking_present'] ?? $row['booking_status'] != 1 ?? 0
+            ];
+        }
+    }
+
+    $cancelled = [];
+    foreach ($rows as $row) {
+        if ($row['booking_status'] != 1 && !isset($cancelled[$row['event_id']][$row['person_id']]) && !isset($approved[$row['event_id']][$row['person_id']])) {
+            $cancelled[$row['event_id']][$row['person_id']] = [
+                'event_id' => $row['event_id'],
+                'person_id' => $row['person_id'],
+                'name' => $row['display_name'],
+                'date' => $row['event_start'],
+                'registered' => $row['registered'],
+                'present' => $row['booking_present'] ?? $row['booking_status'] != 1 ?? 0
+            ];
+        }
+    }
+
+    foreach ($approved as $event_id => $bookings) {
+        foreach ($bookings as $personId => $booking) {
+            $data[] = $booking;
+        }
+    }
+    foreach ($cancelled as $event_id => $bookings) {
+        foreach ($bookings as $personId => $booking) {
+            $data[] = $booking;
+        }
+    }
+
+    return export_data_to_csv('summary_' . date('Y_m', $EM_Event->start), $data);
+}
+
+function generate_booking_list_csv(int $eventId): string
+{
+    global $wpdb;
+
+    $data = [[
+        'Person ID',
+        'Name',
+        'Status',
+        'Registered',
+        'Present',
+    ]];
+
+    $EM_Event = em_get_event($eventId);
+
+    $Table_Name   = $wpdb->prefix.'em_bookings';
+    $sql_query    = $wpdb->prepare("
+                        SELECT 
+                               bookings.event_id, 
+                               bookings.person_id, 
+                               users.display_name, 
+                               events.event_start, 
+                               IF(bookings.person_id > 0, TRUE, FALSE) as registered, 
+                               bookings.booking_present,
+                               bookings.booking_status
+                        FROM nex_em_bookings as bookings
+                        LEFT JOIN nex_em_events events on bookings.event_id = events.event_id
+                        LEFT JOIN nex_users users on bookings.person_id = users.ID
+                        WHERE bookings.event_id = %d
+                        ORDER BY users.display_name", $eventId);
+    $rows = $wpdb->get_results($sql_query, ARRAY_A);
+    $EMpty_Booking = new EM_Booking();
+    $approved = [];
+    foreach ($rows as $row) {
+        if ($row['booking_status'] == 1 && !isset($approved[$row['event_id']][$row['person_id']]) ) {
+            $approved[$row['event_id']][$row['person_id']] = [
+                'person_id' => $row['person_id'],
+                'name' => $row['display_name'],
+                'status' => $EMpty_Booking->status_array[$row['booking_status']],
+                'registered' => $row['registered'],
+                'present' => $row['booking_present'] ?? $row['booking_status'] != 1 ?? 0
+            ];
+        }
+    }
+
+    $cancelled = [];
+    foreach ($rows as $row) {
+        if ($row['booking_status'] != 1 && !isset($cancelled[$row['event_id']][$row['person_id']]) && !isset($approved[$row['event_id']][$row['person_id']])) {
+            $cancelled[$row['event_id']][$row['person_id']] = [
+                'person_id' => $row['person_id'],
+                'name' => $row['display_name'],
+                'status' => $EMpty_Booking->status_array[$row['booking_status']],
+                'registered' => $row['registered'],
+                'present' => $row['booking_present'] ?? $row['booking_status'] != 1 ?? 0
+            ];
+        }
+    }
+
+    foreach ($approved as $event_id => $bookings) {
+        foreach ($bookings as $personId => $booking) {
+            $data[] = $booking;
+        }
+    }
+    foreach ($cancelled as $event_id => $bookings) {
+        foreach ($bookings as $personId => $booking) {
+            $data[] = $booking;
+        }
+    }
+
+    return export_data_to_csv('booking_list_' . $EM_Event->event_id, $data);
+}
+
+function export_data_to_csv(string $filename, array $data = []): string
+{
+    $upload_dir = wp_upload_dir();
+
+    ob_end_clean();
+
+    $dir = $upload_dir['basedir'] . '/csv/'.$filename.'.csv';
+
+    $fp = fopen($dir, 'w');
+    foreach($data as $record)
+    {
+        $outputRecord = $record;
+        fputcsv($fp, $outputRecord);
+    }
+
+    fclose( $fp );
+
+    return $dir;
+}
+
+function generate_booking_list_pdf(string $filename, int $eventId): string
+{
+    $upload_dir = wp_upload_dir();
+    $dir = $upload_dir['basedir'] . '/pdf/'.$filename.'.pdf';
+    $dompdf = new DOMPDF();
+    $dompdf->load_html(do_shortcode('[event]#_BOOKINGPRESENT[/event]'));
+    $dompdf->set_paper('A4', 'landscape');
+    $dompdf->render();
+    $output = $dompdf->output();
+    file_put_contents($dir, $output);
+
+    return $dir;
+}

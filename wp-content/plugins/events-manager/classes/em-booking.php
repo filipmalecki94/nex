@@ -43,6 +43,7 @@ class EM_Booking extends EM_Object{
 	var $booking_tax_rate = null;
 	var $booking_taxes = null;
 	var $booking_meta = array();
+	var $booking_present = false;
 	var $fields = array(
 		'booking_id' => array('name'=>'id','type'=>'%d'),
 		'event_id' => array('name'=>'event_id','type'=>'%d'),
@@ -53,7 +54,8 @@ class EM_Booking extends EM_Object{
 		'booking_status' => array('name'=>'status','type'=>'%d'),
 		'booking_tax_rate' => array('name'=>'tax_rate','type'=>'%f','null'=>1),
 		'booking_taxes' => array('name'=>'taxes','type'=>'%f','null'=>1),
-		'booking_meta' => array('name'=>'meta','type'=>'%s')
+		'booking_meta' => array('name'=>'meta','type'=>'%s'),
+		'booking_present' => array('name'=>'meta','type'=>'%d')
 	);
 	//Other Vars
 	/**
