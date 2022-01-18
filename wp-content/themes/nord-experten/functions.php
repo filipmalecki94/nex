@@ -180,6 +180,13 @@ function codex_custom_init() {
         'supports'   => array( 'title' )
     );
 	register_post_type( 'zahlen-daten-fakten', $args );
+	//Press
+	$args = array(
+        'public'     => true,
+        'label'      => 'Presse',
+        'supports'   => array( 'title' )
+    );
+	register_post_type( 'presse', $args );
 }
 add_action( 'init', 'codex_custom_init' );
 
@@ -221,6 +228,27 @@ function current_lectures_shortcode($attr) {
 	return ob_get_clean();
 }
 add_shortcode('current_lectures', 'current_lectures_shortcode');
+//News page
+function news_page_shortcode($attr) {
+	ob_start();
+	get_template_part( 'template-parts/content', 'news-page' );
+	return ob_get_clean();
+}
+add_shortcode('news_page', 'news_page_shortcode');
+//Press
+function press_shortcode($attr) {
+	ob_start();
+	get_template_part( 'template-parts/content', 'press' );
+	return ob_get_clean();
+}
+add_shortcode('press', 'press_shortcode');
+//Contact container
+function contact_container_shortcode($attr) {
+	ob_start();
+	get_template_part( 'template-parts/content', 'contact-container' );
+	return ob_get_clean();
+}
+add_shortcode('contact_container', 'contact_container_shortcode');
 
 /*
 * Retrieves the attachment ID from the file URL

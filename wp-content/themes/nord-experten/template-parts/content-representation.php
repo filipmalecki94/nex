@@ -15,19 +15,19 @@
 			<?php while ( $the_query->have_posts() ) : $the_query->the_post(); ?>
                 <div class="row president">
                     <div class="col-3 photo">
-                        <a href=""><img src="<?php the_field('president_photo'); ?>" alt=""></a>
+                        <a href="<?php echo get_home_url(); ?>/midglied/thorsten-uebler/"><img src="<?php the_field('president_photo'); ?>" alt=""></a>
                     </div>
                     <div class="col-9 name align-self-center">
-                        <a href=""><?php the_field('president_name'); ?></a>
+                        <a href="<?php echo get_home_url(); ?>/midglied/thorsten-uebler/"><?php the_field('president_name'); ?></a>
                         <p>Präsident</p>
                     </div>
                 </div>
                 <div class="row deputy-president">
                     <div class="col-3 photo">
-                        <a href=""><img src="<?php the_field('deputy_president_photo'); ?>" alt=""></a>   
+                        <a href="<?php echo get_home_url(); ?>/midglied/michael-watzlawik/"><img src="<?php the_field('deputy_president_photo'); ?>" alt=""></a>   
                     </div>
                     <div class="col-9 name align-self-center">
-                        <a href=""><?php the_field('deputy_president_name'); ?></a>
+                        <a href="<?php echo get_home_url(); ?>/midglied/michael-watzlawik/"><?php the_field('deputy_president_name'); ?></a>
                         <p>Stellvertretender Präsident</p>
                     </div>
                 </div>

@@ -1,16 +1,11 @@
-<div id="news-line">
-<div class="background"></div>
+<div id="news-page">
     <div class="container">
-        <div class="header">
-            <h2>News</h2>
-        </div>
         <!-- the query -->
         <?php
             $args = array(
 			    'post_type' => 'news',
                 'orderby'           => 'date',
                 'order'             => 'DESC',
-                'posts_per_page'    => '4'
             );
 		    $the_query = new WP_Query( $args );
 	    ?>
@@ -24,7 +19,7 @@
                                 <div class="news-pic" style="background-image: url(<?php the_field('news_picture'); ?>)"></div>
                             </a>
                             <div class="news-text-box">
-                                <a href="<?php the_permalink(); ?>"><h3 class="news-title"><?php the_title(); ?></h3></a>
+                                <a href="<?php the_permalink(); ?>"><h2 class="news-title"><?php the_title(); ?></h2></a>
                                 <?php showBeforeMore(get_field('news_text')); ?>
                             </div>
                         </div>

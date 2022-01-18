@@ -34,12 +34,38 @@ get_header();
 			<?php endif; ?>
 			<div id="main-content">
 				<div class="container">
+					<?php  if ( is_singular( 'presse' ) ) : ?>
+						<section id="single-article">
+							<div class="container">
+								<div class="row">
+									<div class="col-3 image">
+										<img src="<?php the_field('article_picture'); ?>" alt="">
+										<?php if( get_field('article_pdf') ): ?>
+											<a class="pdf-file" href="<?php the_field('article_pdf'); ?>" target="_blank">PDF Herunterladen</a>
+										<?php endif; ?>	
+									</div>
+									<div class="col-9 text">
+										<p class="date-time">Veröffentlicht am <?php the_date(); ?>, <?php the_time(); ?></p>
+										<h2><?php the_title() ?></h2>
+										<?php the_field('article_text'); ?>
+									</div>
+								</div> 
+							</div>
+						</section>
+					<?php endif ?>
 					<?php  if ( is_singular( 'news' ) ) : ?>
 						<section id="single-news">
 							<div class="container">  
-								<p class="date"><?php the_date(); ?></p>
-								<h2><?php the_title() ?></h2>
-								<?php the_field('news_text'); ?>
+								<div class="row">
+									<div class="col-3 image">
+										<img src="<?php the_field('news_picture'); ?>" alt="">
+									</div>
+									<div class="col-9 text">
+										<p class="date-time">Veröffentlicht am <?php the_date(); ?>, <?php the_time(); ?></p>
+										<h2><?php the_title() ?></h2>
+										<?php the_field('news_text'); ?>
+									</div>
+								</div>
 							</div>
 						</section>
 					<?php endif ?>

@@ -9,9 +9,38 @@
                 border-left: 1px solid $grey06;
                 box-shadow: 0px 0px 10px -1px rgba($black, 0.25);
 
+                .um-member-cover {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 50%;
+                    height: 195px !important;
+                    background-color: unset;
+                    padding: 30px;
+
+                    .um-member-cover-e {
+                        a {
+                            img {
+                                width: unset;
+                                max-width: 100%;
+                                height: auto;
+                            }
+                        }
+                    }
+                }
+
                 .um-member-photo {
                     text-align: left;
-                    padding: 25px 40px;
+                    padding: 30px;
+
+                    a {
+                        img {
+                            top: unset;
+                            width: 125px;
+                            height: 125px;
+                            margin-bottom: unset;
+                        }
+                    }
                 }
 
                 .um-member-card {
@@ -39,7 +68,6 @@
                     }
 
                     .um-member-tagline {
-                        height: 44px;
                         font-family: $Lato;
                         font-size: 15px;
                         line-height: 22px;
@@ -48,9 +76,9 @@
                         padding: 0 40px;
                     }
 
-                    .um-member-tagline.um-member-tagline-short_description {
-                        height: 88px;
-                        margin-top: 25px;
+                    .um-member-tagline.um-member-tagline-about {
+                        height: 127px;
+                        margin-top: 15px;
 
                         p {
                             font-family: $Lato;
@@ -61,7 +89,10 @@
                     }
 
                     .um-member-button {
-                        margin: 25px 0 30px 0;
+                        position: absolute;
+                        right: 0;
+                        bottom: 30px;
+                        left: 0;
 
                         a {
                             display: inline-block;
@@ -88,6 +119,23 @@
 
 .um-profile {
     .um-form {
+        .um-cover {
+            height: 110px !important;
+            background-color: unset;
+
+            .um-cover-e {
+                height: auto;
+                text-align: right;
+
+                img {
+                    display: initial;
+                    width: unset !important;
+                    max-width: 100%;
+                    height: auto;
+                }
+            }
+        }
+
         .um-header {
             .um-profile-meta {
                 display: none;

@@ -310,14 +310,22 @@
             .wp-block-columns {
                 .wp-block-column {
                     .meeting-place-on-home-page {
-                        color: $blue01;
-
                         &::before {
                             font-family: 'nex-font-icons';
                             content: $iconPlace;
                             font-size: 1.714rem;
                             vertical-align: middle;
                             margin-right: 15px;
+                        }
+
+                        a {
+                            font-family: $Lato;
+                            font-size: 1rem;
+                            color: $grey01;
+
+                            &:hover {
+                                color: $red01;
+                            }
                         }
                     }
 
@@ -1146,6 +1154,547 @@
                 }
             }
 
+            #press {
+                padding: 50px 0;
+
+                .container {
+
+                    .row {
+                        margin-top: 60px;
+
+                        .single-article {
+                            margin-bottom: 15px;
+
+                            .article-card {
+                                text-align: center;
+                                background-color: $white;
+
+                                a {
+                                    .article-pic {
+                                        height: 315px;
+                                        background-position: center;
+                                        background-repeat: no-repeat;
+                                        background-size: cover;
+                                        transition: box-shadow 0.33s;
+
+                                        @media (max-width: 1199px) {
+                                            height: 220px;
+                                        }
+
+                                        @media (max-width: 991px) {
+                                            height: 340px;
+                                        }
+
+                                        @media (max-width: 767px) {
+                                            height: 246px;
+                                        }
+
+                                        @media (max-width: 575px) {
+                                            height: 288px;
+                                        }
+                                    }
+
+                                    &:hover {
+                                        .article-pic {
+                                            box-shadow: inset 0px 0px 15px 0px rgba($black, 0.75);
+                                        }
+                                    }
+                                }
+
+                                .article-text-box {
+                                    text-align: left;
+                                    padding: 15px 0;
+
+                                    a {
+                                        .article-title {
+                                            height: 45px;
+                                            font-family: $Lato;
+                                            font-size: 1.286rem;
+                                            color: $grey04;
+                                            transition: all 0.33s;
+
+                                            @media (max-width: 1199px) {
+                                                font-size: 1.143rem;
+                                            }
+                                        }
+
+                                        &:hover {
+                                            .article-title {
+                                                color: $red01;
+                                            }
+                                        }
+                                    }
+
+                                    p {
+                                        height: 140px;
+                                        font-size: 1.071rem;
+                                        overflow-y: auto;
+                                        margin-top: 15px;
+
+                                        strong {
+                                            font-weight: normal;
+                                        }
+                                    }
+
+                                    @media (max-width: 1199px) {
+                                        height: 230px;
+                                        padding: 30px;
+                                    }
+
+                                    @media (max-width: 991px) {
+                                        height: 190px;
+                                    }
+
+                                    @media (max-width: 767px) {
+                                        height: 210px;
+                                    }
+
+                                    @media (max-width: 575px) {
+                                        height: 120px;
+                                        padding: 15px;
+                                    }
+                                }
+                            }
+
+                            @media (max-width: 991px) {
+                                &:nth-child(3) {
+                                    margin-top: 15px;
+                                }
+
+                                &:nth-child(4) {
+                                    margin-top: 15px;
+                                }
+                            }
+
+                            @media (max-width: 575px) {
+                                margin-top: 15px;
+
+                                &:first-child {
+                                    margin-top: 0;
+                                }
+                            }
+                        }
+
+                        @media (max-width: 575px) {
+                            margin-top: 30px;
+                        }
+                    }
+                }
+
+                @media (max-width: 575px) {
+                    padding: 30px 0;
+                }
+            }
+
+            #news-page {
+                padding: 50px 0;
+
+                .container {
+
+                    .row {
+                        margin-top: 60px;
+
+                        .single-news {
+                            margin-bottom: 15px;
+
+                            .news-card {
+                                text-align: center;
+                                background-color: $white;
+
+                                a {
+                                    .news-pic {
+                                        height: 315px;
+                                        background-position: center;
+                                        background-repeat: no-repeat;
+                                        background-size: cover;
+                                        transition: box-shadow 0.33s;
+
+                                        @media (max-width: 1199px) {
+                                            height: 220px;
+                                        }
+
+                                        @media (max-width: 991px) {
+                                            height: 340px;
+                                        }
+
+                                        @media (max-width: 767px) {
+                                            height: 246px;
+                                        }
+
+                                        @media (max-width: 575px) {
+                                            height: 288px;
+                                        }
+                                    }
+
+                                    &:hover {
+                                        .news-pic {
+                                            box-shadow: inset 0px 0px 15px 0px rgba($black, 0.75);
+                                        }
+                                    }
+                                }
+
+                                .news-text-box {
+                                    text-align: left;
+                                    padding: 15px 0;
+
+                                    a {
+                                        .news-title {
+                                            font-family: $Lato;
+                                            font-size: 1.286rem;
+                                            color: $grey04;
+                                            white-space: nowrap;
+                                            text-transform: uppercase;
+                                            border-bottom: 1px solid $grey05;
+                                            transition: all 0.33s;
+
+                                            @media (max-width: 1199px) {
+                                                font-size: 1.143rem;
+                                            }
+                                        }
+
+                                        &:hover {
+                                            .news-title {
+                                                color: $red01;
+                                                border-bottom: 1px solid $red01;
+                                            }
+                                        }
+                                    }
+
+                                    p {
+                                        height: 100px;
+                                        font-size: 1.071rem;
+                                        overflow-y: auto;
+                                        margin-top: 15px;
+                                    }
+
+                                    @media (max-width: 1199px) {
+                                        height: 230px;
+                                        padding: 30px;
+                                    }
+
+                                    @media (max-width: 991px) {
+                                        height: 190px;
+                                    }
+
+                                    @media (max-width: 767px) {
+                                        height: 210px;
+                                    }
+
+                                    @media (max-width: 575px) {
+                                        height: 120px;
+                                        padding: 15px;
+                                    }
+                                }
+                            }
+
+                            @media (max-width: 991px) {
+                                &:nth-child(3) {
+                                    margin-top: 15px;
+                                }
+
+                                &:nth-child(4) {
+                                    margin-top: 15px;
+                                }
+                            }
+
+                            @media (max-width: 575px) {
+                                margin-top: 15px;
+
+                                &:first-child {
+                                    margin-top: 0;
+                                }
+                            }
+                        }
+
+                        @media (max-width: 575px) {
+                            margin-top: 30px;
+                        }
+                    }
+                }
+
+                @media (max-width: 575px) {
+                    padding: 30px 0;
+                }
+            }
+
+            #single-article {
+                .container {
+                    .row {
+                        .image {
+                            img {
+                                width: 100%;
+                                height: auto;
+                            }
+
+                            .pdf-file {
+                                display: block;
+                                margin-top: 15px;
+                                font-family: $Lato;
+                                font-size: 1.071rem;
+                                color: $grey04;
+                                transition: all 0.33s;
+
+                                &:hover {
+                                    color: $red01;
+                                }
+                            }
+                        }
+
+                        .text {
+                            .date-time {
+                                font-size: 1rem;
+                                font-style: italic;
+                            }
+
+                            p {
+                                font-size: 1.071rem;
+                            }
+                        }
+                    }
+                }
+            }
+
+            #single-news {
+                .container {
+                    .row {
+                        .image {
+                            img {
+                                width: 100%;
+                                height: auto;
+                            }
+                        }
+
+                        .text {
+                            .date-time {
+                                font-size: 1rem;
+                                font-style: italic;
+                            }
+
+                            p {
+                                font-size: 1.071rem;
+                            }
+                        }
+                    }
+                }
+            }
+
+            #contact-container {
+                .row {
+                    .contact-form {
+                        .wpcf7 {
+                            .wpcf7-form {
+                                position: relative;
+
+                                p {
+                                    margin-bottom: 0;
+
+                                    .wpcf7-form-control-wrap {
+
+                                        input,
+                                        textarea {
+                                            width: 100%;
+                                            font-size: 1.071rem;
+                                            border: none;
+                                            outline: none;
+                                            border-bottom: 1px solid $grey03;
+                                            padding: 15px 0;
+                                        }
+
+                                        textarea {
+                                            resize: none;
+                                        }
+
+                                        .wpcf7-form-control {
+                                            .wpcf7-list-item {
+                                                width: 100%;
+                                                text-indent: -18px;
+                                                margin-left: 36px;
+
+                                                label {
+                                                    input[type=checkbox] {
+                                                        width: auto;
+                                                        vertical-align: middle;
+                                                        margin-right: 5px;
+                                                    }
+
+                                                    .wpcf7-list-item-label {
+                                                        vertical-align: middle;
+
+                                                        &::before {
+                                                            display: none;
+                                                        }
+
+                                                        a {
+                                                            color: $grey01;
+                                                            text-decoration: underline;
+
+                                                            &:hover {
+                                                                color: $red01;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    input[type=submit].wpcf7-submit {
+                                        border: none;
+                                        border-radius: unset;
+                                        color: $white;
+                                        background-color: $red01;
+                                        padding: 8px 25px;
+                                        margin-top: 30px;
+                                    }
+
+                                    .wpcf7-submit:disabled {
+                                        filter: opacity(50%);
+                                    }
+
+                                    .wpcf7-spinner {
+                                        position: absolute;
+                                        right: 0;
+                                        bottom: 6px;
+                                        margin: 0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    .contact-boxes {
+                        .address-phone-mail {
+                            background-color: $grey02;
+                            padding: 15px;
+                            margin-bottom: 90px;
+
+                            .box-header {
+                                background-color: $blue01;
+                                padding: 9px 15px;
+
+                                h2 {
+                                    font-family: $Raleway;
+                                    color: $white;
+                                    font-size: 1rem;
+                                    font-weight: 500;
+                                    text-transform: uppercase;
+                                    text-align: center;
+                                    margin-bottom: 0;
+                                }
+                            }
+
+                            .main-name {
+                                font-size: 1.143rem;
+                                margin: 20px 0 0 0;
+                            }
+
+                            .sub-name {
+                                font-size: 1.143rem;
+                                margin: 0;
+                            }
+
+                            .representer-name {
+                                font-size: 1.143rem;
+                                margin: 0;
+
+                                a {
+                                    font-family: "Lato", sans-serif;
+                                    font-size: 1.143rem;
+                                    color: $grey01;
+
+                                    &:hover {
+                                        color: $red01;
+                                    }
+                                }
+                            }
+
+                            .address {
+                                display: block;
+                                margin-top: 15px;
+
+                                address {
+                                    font-family: "Lato", sans-serif;
+                                    font-size: 1.143rem;
+                                    color: $grey01;
+                                    transition: color 0.33s;
+                                }
+
+                                &:hover {
+                                    address {
+                                        color: $red01;
+                                    }
+                                }
+                            }
+
+                            .contact-mail,
+                            .contact-phone {
+                                font-size: 1.143rem;
+                                margin-top: 15px;
+
+                                a {
+                                    font-family: "Lato", sans-serif;
+                                    font-size: 1.143rem;
+                                    color: $grey01;
+
+                                    &:hover {
+                                        color: $red01;
+                                    }
+                                }
+                            }
+                        }
+
+                        .management {
+                            background-color: $grey02;
+                            padding: 15px;
+
+                            .box-header {
+                                background-color: $grey01;
+                                padding: 9px 15px;
+
+                                h2 {
+                                    font-family: $Raleway;
+                                    color: $white;
+                                    font-size: 1rem;
+                                    font-weight: 500;
+                                    text-transform: uppercase;
+                                    text-align: center;
+                                    margin-bottom: 0;
+                                }
+                            }
+
+                            .president,
+                            .deputy-president {
+                                border-bottom: 1px solid $grey03;
+                                margin-top: 10px;
+
+                                .photo {
+                                    padding-bottom: 5px;
+
+                                    a {
+                                        img {
+                                            max-width: 100%;
+                                            height: auto;
+                                        }
+                                    }
+                                }
+
+                                .name {
+                                    a {
+                                        font-family: "Lato", sans-serif;
+                                        font-size: 1.143rem;
+                                        color: $grey01;
+
+                                        &:hover {
+                                            color: $red01;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             .gs_logo_area {
 
                 .swiper-button-prev,
@@ -1157,6 +1706,11 @@
                         fill: $grey03;
                     }
                 }
+            }
+
+            .pgc-sgb-cb {
+                padding-bottom: 30px;
+                border-bottom: 1px solid $grey03;
             }
 
             @import "ump";
