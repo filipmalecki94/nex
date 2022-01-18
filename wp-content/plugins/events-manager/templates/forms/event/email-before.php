@@ -22,13 +22,25 @@ $arr = array_merge($EM_Event_Array['event_email_before'] ?? [], array_fill(0,10 
                         <label>Subject</label>
                         <input type="text" name="event_email_before_subject_<?= $id ?>" <?= isset($item['subject']) ?  'value="'.$item['subject'].'"' : ''  ?>>
                     </div>
-                    <div class="email-before-subject" style="margin-top:10px;">
+                    <div class="email-before-attach-booking-list" style="margin-top:10px;">
                         <label>Attach booking list</label>
                         <br>
-                        <label for="event_email_before_pdf_attach_<?= $id ?>">PDF</label>
-                        <input type="checkbox" value="1" name="event_email_before_pdf_attach_<?= $id ?>" <?= isset($item['pdf_attach']) && $item['pdf_attach'] == 1 ?  'checked' : null  ?>>
-                        <label for="event_email_before_csv_attach_<?= $id ?>">CSV</label>
-                        <input type="checkbox" value="1" name="event_email_before_csv_attach_<?= $id ?>" <?= isset($item['csv_attach']) && $item['csv_attach'] == 1 ?  'checked' : null  ?>>
+                        <label for="event_email_before_csv_attach_booking_list_<?= $id ?>">CSV</label>
+                        <input type="checkbox"
+                               value="1"
+                               name="event_email_before_csv_attach_booking_list_<?= $id ?>"
+                            <?= isset($item['csv_attach_booking_list']) && $item['csv_attach_booking_list'] == 1 ?  'checked' : null  ?>
+                        >
+                    </div>
+                    <div class="email-before-attach-summary" style="margin-top:10px;">
+                        <label>Attach monthly summary</label>
+                        <br>
+                        <label for="event_email_before_csv_attach_summary_<?= $id ?>">CSV</label>
+                        <input type="checkbox"
+                               value="1"
+                               name="event_email_before_csv_attach_summary_<?= $id ?>"
+                            <?= isset($item['csv_attach_summary']) && $item['csv_attach_summary'] == 1 ?  'checked' : null  ?>
+                        >
                     </div>
                     <div class="email-before-content">
                         <label>Content</label>

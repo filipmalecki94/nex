@@ -729,7 +729,7 @@ class EM_Event extends EM_Object{
 		}
 		//reset start and end objects so they are recreated with the new dates/times if and when needed
 		$this->start = $this->end = null;
-        foreach (['to','content','active','days','when','subject','pdf_attach','csv_attach'] as $item) {
+        foreach (['to','content','active','days','when','subject','pdf_attach_booking_list','csv_attach_booking_list','pdf_attach_summary','csv_attach_summary'] as $item) {
             $eventEmailBeforeToSet = array_filter($_POST, function($e) use ($item,$eventEmailBeforeActives) {
                 $temp = str_replace('event_email_before_'.$item.'_','',$e);
                 return stripos($e,'event_email_before_'.$item.'_') !== false && isset($eventEmailBeforeActives['event_email_before_active_'.$temp]);
@@ -1159,14 +1159,22 @@ class EM_Event extends EM_Object{
                 $m = $eventEmailBefore['when'] === 'before' ? -1 : 1;
                 $t = 24 * 3600 * ((int)$eventEmailBefore['days']) * $m;
                 $s = clone $this->start(true);
-                $date = strtotime($s->setTimeString($eventEmailBefore['time'])->setTimezone($this->event_timezone)->getDateTime(true)) + $t;
+                $date = strtotime($s->setTimeString($eventEmailBefore['time'] ?? '00:00:00')->setTimezone($this->event_timezone)->getDateTime(true)) + $t;
                 schedule_email_before(
                     $date,
                     (int)$this->event_id,
                     [
                         'recipients' => explode(',', $eventEmailBefore['to']),
                         'subject' => $eventEmailBefore['subject'],
-                        'body' => $eventEmailBefore['content']
+                        'body' => $eventEmailBefore['content'],
+                        'attachments' => [
+                                'booking_list' => [
+                                    'csv' => (bool)($eventEmailBefore['csv_attach_booking_list'] ?? false)
+                                ],
+                                'summary' => [
+                                    'csv' => (bool)($eventEmailBefore['csv_attach_summary'] ?? false)
+                                ]
+                        ]
                     ]
                 );
             }
@@ -3078,7 +3086,15 @@ class EM_Event extends EM_Object{
                                     [
                                         'recipients' => explode(',', $eventEmailBefore['to']),
                                         'subject' => $eventEmailBefore['subject'],
-                                        'body' => $eventEmailBefore['content']
+                                        'body' => $eventEmailBefore['content'],
+                                        'attachments' => [
+                                            'booking_list' => [
+                                                'csv' => (bool)($eventEmailBefore['csv_attach_booking_list'] ?? false)
+                                            ],
+                                            'summary' => [
+                                                'csv' => (bool)($eventEmailBefore['csv_attach_summary'] ?? false)
+                                            ]
+                                        ]
                                     ]
                                 );
                             }
@@ -3162,7 +3178,15 @@ class EM_Event extends EM_Object{
                             [
                                 'recipients' => explode(',', $eventEmailBefore['to']),
                                 'subject' => $eventEmailBefore['subject'],
-                                'body' => $eventEmailBefore['content']
+                                'body' => $eventEmailBefore['content'],
+                                'attachments' => [
+                                    'booking_list' => [
+                                        'csv' => (bool)($eventEmailBefore['csv_attach_booking_list'] ?? false)
+                                    ],
+                                    'summary' => [
+                                        'csv' => (bool)($eventEmailBefore['csv_attach_summary'] ?? false)
+                                    ]
+                                ]
                             ]
                         );
                     }
