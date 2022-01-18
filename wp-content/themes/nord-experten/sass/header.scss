@@ -1,0 +1,224 @@
+#contact-bar {
+    background-color: $blue01;
+
+    .nav-item {
+        border-right: 1px solid rgba($white, 0.5);
+
+        .nav-link {
+            padding: 7.5px 15px;
+
+            .text {
+                font-family: $Opensans;
+                font-size: 0.929rem;
+                color: $white;
+                margin-left: 10px;
+                transition: color 0.33s;
+
+                @media (max-width: 575px) {
+                    display: none;
+                }
+            }
+
+            .icon {
+                &::before {
+                    font-family: "nex-font-icons";
+                    font-size: 0.929rem;
+                    color: $white;
+                    transition: color 0.33s;
+                }
+            }
+
+            &:hover {
+                .text {
+                    color: $red01;
+                }
+
+                .icon {
+                    &::before {
+                        color: $red01;
+                    }
+                }
+            }
+        }
+
+        .email {
+            .icon {
+                &::before {
+                    content: $iconMail;
+                }
+            }
+        }
+
+        .phone {
+            .icon {
+                &::before {
+                    content: $iconPhone;
+                }
+            }
+        }
+
+        .xing {
+            .icon {
+                &::before {
+                    content: $iconXing;
+                }
+            }
+        }
+
+        .facebook {
+            .icon {
+                &::before {
+                    content: $iconFacebook;
+                }
+            }
+        }
+
+        .linkedin {
+            .icon {
+                &::before {
+                    content: $iconLinkedin;
+                }
+            }
+        }
+        .instagram {
+            .icon {
+                &::before {
+                    content: $iconInstagram;
+                }
+            }
+        }
+    }
+
+    .nav-item:first-child {
+        border-left: 1px solid rgba($white, 0.5);
+    }
+}
+
+.navbar {
+    display: relative;
+    padding: calc(0.781vw + 15px) 0 calc(0.521vw + 15px) 0;
+
+    .custom-logo-link {
+        .custom-logo {
+            max-width: 100%;
+            height: auto;
+
+            @media (max-width: 575px) {
+                max-width: 80%;
+            }
+        }
+    }
+
+    .navbar-toggler {
+        border: none;
+        border-radius: unset;
+        padding: 0;
+
+        .navbar-toggler-icon {
+            width: auto;
+            height: auto;
+            vertical-align: middle;
+            background-repeat: unset;
+            background-position: unset;
+            background-size: unset;
+
+            &::before {
+                font-family: "nex-font-icons";
+                content: $iconMenu;
+                font-size: 30px;
+                color: $blue01;
+                transition: color 0.33s;
+            }
+        }
+
+        &:hover {
+            .navbar-toggler-icon {
+                &::before {
+                    color: $red01;
+                }
+            }
+        }
+
+        &:focus {
+            box-shadow: none;
+        }
+
+        @media (max-width: 991px) {
+            position: absolute;
+            right: 15px;
+
+            &[aria-expanded="true"] {
+                .navbar-toggler-icon {
+                    &::before {
+                        content: $iconClose;
+                    }
+                }
+            }
+        }
+    }
+
+    .navbar-collapse {
+        .navbar-nav {
+            .menu-item {
+                margin-right: 20px;
+
+                a {
+                    font-family: $Lato;
+                    font-size: 1.071rem;
+                    color: $blue01;
+                    text-transform: uppercase;
+                    margin-left: unset;
+                    transition: color 0.33s;
+
+                    &:hover {
+                        color: $red01;
+                    }
+                }
+
+                @media (max-width: 991px) {
+                    margin-right: 0;
+                    line-height: 30px;
+                }
+            }
+
+            .menu-item:last-child {
+                margin-right: 0;
+
+                a {
+                    &::after {
+                        font-family: 'nex-font-icons';
+                        content: $iconPerson;
+                        margin-left: 5px;
+                    }
+                }
+            }
+
+            .current-menu-item {
+                a {
+                    color: $red01;
+                }
+            }
+
+            @media (max-width: 991px) {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 991px) {
+            position: absolute;
+            top: 91px;
+            right: 0;
+            z-index: 2;
+            background-color: $white;
+            box-shadow: -5px 5px 10px -5px rgba($blue01, 0.5);
+        }
+
+        @media (max-width: 575px){
+            top: 79px;
+        }
+    }
+
+    @media (max-width: 991px) {
+        padding: 15px 0 15px 0;
+    }
+}

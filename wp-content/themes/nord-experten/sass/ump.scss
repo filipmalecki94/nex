@@ -1,0 +1,145 @@
+.um-directory {
+    .um-members-wrapper {
+        .um-members {
+            .um-member {
+                height: 500px;
+                border-top: 1px solid $grey06;
+                border-right: 1px solid $grey06;
+                border-bottom: 8px solid $blue01;
+                border-left: 1px solid $grey06;
+                box-shadow: 0px 0px 10px -1px rgba($black, 0.25);
+
+                .um-member-cover {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 50%;
+                    height: 195px !important;
+                    background-color: unset;
+                    padding: 30px;
+
+                    .um-member-cover-e {
+                        a {
+                            img {
+                                width: unset;
+                                max-width: 100%;
+                                height: auto;
+                            }
+                        }
+                    }
+                }
+
+                .um-member-photo {
+                    text-align: left;
+                    padding: 30px;
+
+                    a {
+                        img {
+                            top: unset;
+                            width: 125px;
+                            height: 125px;
+                            margin-bottom: unset;
+                        }
+                    }
+                }
+
+                .um-member-card {
+                    padding-bottom: 0;
+
+                    .um-member-name {
+                        justify-content: flex-start;
+                        padding: 0 40px;
+                        margin-bottom: 10px;
+
+                        a {
+                            font-family: $Lato;
+                            font-size: 21px;
+                            font-weight: 700;
+                            color: $blue02;
+
+                            &:hover {
+                                color: $red01;
+                            }
+                        }
+                    }
+
+                    .um-members-edit-btn {
+                        display: none;
+                    }
+
+                    .um-member-tagline {
+                        font-family: $Lato;
+                        font-size: 15px;
+                        line-height: 22px;
+                        color: $blue02;
+                        text-align: left;
+                        padding: 0 40px;
+                    }
+
+                    .um-member-tagline.um-member-tagline-about {
+                        height: 127px;
+                        margin-top: 15px;
+
+                        p {
+                            font-family: $Lato;
+                            font-size: 15px;
+                            line-height: 22px;
+                            color: $grey01;
+                        }
+                    }
+
+                    .um-member-button {
+                        position: absolute;
+                        right: 0;
+                        bottom: 30px;
+                        left: 0;
+
+                        a {
+                            display: inline-block;
+                            font-family: $Raleway;
+                            font-size: 14px;
+                            color: $white;
+                            text-transform: uppercase;
+                            width: 75%;
+                            background-color: $blue01;
+                            padding: 10px 0;
+                            border-radius: 2px;
+                            transition: background-color 0.33s;
+
+                            &:hover {
+                                background-color: $red01;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.um-profile {
+    .um-form {
+        .um-cover {
+            height: 110px !important;
+            background-color: unset;
+
+            .um-cover-e {
+                height: auto;
+                text-align: right;
+
+                img {
+                    display: initial;
+                    width: unset !important;
+                    max-width: 100%;
+                    height: auto;
+                }
+            }
+        }
+
+        .um-header {
+            .um-profile-meta {
+                display: none;
+            }
+        }
+    }
+}
