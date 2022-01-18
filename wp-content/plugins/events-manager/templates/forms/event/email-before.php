@@ -25,6 +25,12 @@ $arr = array_merge($EM_Event_Array['event_email_before'] ?? [], array_fill(0,10 
                     <div class="email-before-attach-booking-list" style="margin-top:10px;">
                         <label>Attach booking list</label>
                         <br>
+                        <label for="event_email_before_pdf_attach_booking_list_<?= $id ?>">PDF</label>
+                        <input type="checkbox"
+                               value="1"
+                               name="event_email_before_pdf_attach_booking_list_<?= $id ?>"
+                            <?= isset($item['pdf_attach_booking_list']) && $item['pdf_attach_booking_list'] == 1 ?  'checked' : null  ?>
+                        >
                         <label for="event_email_before_csv_attach_booking_list_<?= $id ?>">CSV</label>
                         <input type="checkbox"
                                value="1"
@@ -35,6 +41,12 @@ $arr = array_merge($EM_Event_Array['event_email_before'] ?? [], array_fill(0,10 
                     <div class="email-before-attach-summary" style="margin-top:10px;">
                         <label>Attach monthly summary</label>
                         <br>
+                        <label for="event_email_before_pdf_attach_summary_<?= $id ?>">PDF</label>
+                        <input type="checkbox"
+                               value="1"
+                               name="event_email_before_pdf_attach_summary_<?= $id ?>"
+                            <?= isset($item['pdf_attach_summary']) && $item['pdf_attach_summary'] == 1 ?  'checked' : null  ?>
+                        >
                         <label for="event_email_before_csv_attach_summary_<?= $id ?>">CSV</label>
                         <input type="checkbox"
                                value="1"

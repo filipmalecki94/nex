@@ -1169,9 +1169,11 @@ class EM_Event extends EM_Object{
                         'body' => $eventEmailBefore['content'],
                         'attachments' => [
                                 'booking_list' => [
+                                    'pdf' => (bool)($eventEmailBefore['pdf_attach_booking_list'] ?? false),
                                     'csv' => (bool)($eventEmailBefore['csv_attach_booking_list'] ?? false)
                                 ],
                                 'summary' => [
+                                    'pdf' => (bool)($eventEmailBefore['pdf_attach_summary'] ?? false),
                                     'csv' => (bool)($eventEmailBefore['csv_attach_summary'] ?? false)
                                 ]
                         ]
@@ -3089,9 +3091,11 @@ class EM_Event extends EM_Object{
                                         'body' => $eventEmailBefore['content'],
                                         'attachments' => [
                                             'booking_list' => [
+                                                'pdf' => (bool)($eventEmailBefore['pdf_attach_booking_list'] ?? false),
                                                 'csv' => (bool)($eventEmailBefore['csv_attach_booking_list'] ?? false)
                                             ],
                                             'summary' => [
+                                                'pdf' => (bool)($eventEmailBefore['pdf_attach_summary'] ?? false),
                                                 'csv' => (bool)($eventEmailBefore['csv_attach_summary'] ?? false)
                                             ]
                                         ]
@@ -3181,9 +3185,11 @@ class EM_Event extends EM_Object{
                                 'body' => $eventEmailBefore['content'],
                                 'attachments' => [
                                     'booking_list' => [
+                                        'pdf' => (bool)($eventEmailBefore['pdf_attach_booking_list'] ?? false),
                                         'csv' => (bool)($eventEmailBefore['csv_attach_booking_list'] ?? false)
                                     ],
                                     'summary' => [
+                                        'pdf' => (bool)($eventEmailBefore['pdf_attach_summary'] ?? false),
                                         'csv' => (bool)($eventEmailBefore['csv_attach_summary'] ?? false)
                                     ]
                                 ]

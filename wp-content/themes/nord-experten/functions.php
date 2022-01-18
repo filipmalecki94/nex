@@ -279,6 +279,10 @@ function send_email_before(int $eventId, array $recipients, string $subject, str
         $att[] = generate_booking_list_csv($eventId);
     }
 
+    if ($attachments['booking_list']['pdf'] ?? false) {
+        $att[] = generate_booking_list_pdf('booking_list_'.$eventId, $eventId);
+    }
+
     foreach ($recipients as $recipient) {
         $m->send($subject, $body, $recipient, $att);
     }
@@ -449,6 +453,20 @@ function export_data_to_csv(string $filename, array $data = []): string
     }
 
     fclose( $fp );
+
+    return $dir;
+}
+
+function generate_booking_list_pdf(string $filename, int $eventId): string
+{
+    $upload_dir = wp_upload_dir();
+    $dir = $upload_dir['basedir'] . '/pdf/'.$filename.'.pdf';
+    $dompdf = new DOMPDF();
+    $dompdf->load_html(do_shortcode('[event]#_BOOKINGPRESENT[/event]'));
+    $dompdf->set_paper('A4', 'landscape');
+    $dompdf->render();
+    $output = $dompdf->output();
+    file_put_contents($dir, $output);
 
     return $dir;
 }
