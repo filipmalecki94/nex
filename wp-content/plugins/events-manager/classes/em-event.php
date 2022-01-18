@@ -3096,59 +3096,45 @@ class EM_Event extends EM_Object{
 		 				//unset id
 			 			unset($ticket['ticket_id']);
 		 				$ticket['ticket_parent'] = $EM_Ticket->ticket_id;
-			 			//prep ticket meta for insertion with relative info for each event
+					    //clean up ticket values
+			 			foreach($ticket as $k => $v){
+			 				if( empty($v) && $k != 'ticket_name' ){ 
+			 					$ticket[$k] = 'NULL';
+			 				}else{
+			 					$data_type = !empty($EM_Ticket->fields[$k]['type']) ? $EM_Ticket->fields[$k]['type']:'%s';
+			 					if(is_array($ticket[$k])) $v = serialize($ticket[$k]);
+			 					$ticket[$k] = $wpdb->prepare($data_type,$v);
+			 				}
+			 			}
+			 			//prep ticket meta for insertion with relative info for each event date
+			 			$EM_DateTime = $this->start()->copy();
 			 			foreach($event_ids as $event_id){
-                            $idsToAdd = [];
-                            $ticket['event_id'] = $event_id;
-                            $ticket['ticket_spaces'] = $EM_Ticket->ticket_spaces;
-
-                            $newEmTicket = new EM_Ticket($ticket);
-                            $newEmTicket->save(true);
-
-                            $tempEvent = $newEmTicket->get_event();
-                            $tempBookings = $tempEvent->get_bookings(true);
-                            $bookForEveryUser = false;
-
-                            foreach ($_REQUEST['tax_input']['event-categories'] ?? [] as $categoryId) {
-                                if (em_get_category($categoryId)->slug === 'book_for_every_user') {
-                                    $bookForEveryUser = true;
-                                }
-                            }
-
-                            if ($bookForEveryUser) {
-                                $users = get_users(['role__in' => ['contributor', 'administrator']]);
-                                foreach ($users as $user) {
-                                    if ($tempBookings->has_booking($user->ID) === false) {
-                                        $idsToAdd[] = $user->ID;
-                                    }
-                                }
-                            }
-                            foreach ($this->get_tickets() as $t) {
-                                $x = (new EM_Tickets_Bookings($t, true))->tickets_bookings[$t->get_id()];
-                                /** @var EM_Ticket_Booking $ticket_Booking */
-                                foreach ($x as $ticket_Booking) {
-                                    $ticket_Booking->get_booking()->delete();
-                                    $ticket_Booking->delete();
-                                }
-                            }
-                            foreach ($idsToAdd as $userId) {
-                                $emBooking = new EM_Booking([
-                                    'event_id' => $tempEvent->get_id(),
-                                    'person_id' => $userId,
-                                    'booking_spaces' => 1
-                                ]);
-                                $tempBookings->add($emBooking, false);
-                                $emTicketBooking = new EM_Ticket_Booking([
-                                    'ticket_id' => $newEmTicket->get_id(),
-                                    'booking_id' => $emBooking->booking_id,
-                                    'ticket_booking_price' => 0,
-                                    'ticket_booking_spaces' => 1,
-                                ]);
-                                $emTicketBooking->save();
-                            }
-                        }
+			 				$ticket['event_id'] = $event_id;
+			 				$ticket['ticket_start'] = $ticket['ticket_end'] = 'NULL';
+			 				//sort out cut-of dates
+			 				if( !empty($ticket_meta_recurrences) ){
+			 					$EM_DateTime->setTimestamp($event_dates[$event_id]); //by using EM_DateTime we'll generate timezone aware dates
+			 					if( array_key_exists('start_days', $ticket_meta_recurrences) && $ticket_meta_recurrences['start_days'] !== false && $ticket_meta_recurrences['start_days'] !== null  ){
+			 						$ticket_start_days = $ticket_meta_recurrences['start_days'] >= 0 ? '+'. $ticket_meta_recurrences['start_days']: $ticket_meta_recurrences['start_days'];
+			 						$ticket_start_date = $EM_DateTime->modify($ticket_start_days.' days')->getDate();
+			 						$ticket['ticket_start'] = "'". $ticket_start_date . ' '. $ticket_meta_recurrences['start_time'] ."'";
+			 					}
+			 					if( array_key_exists('end_days', $ticket_meta_recurrences) && $ticket_meta_recurrences['end_days'] !== false && $ticket_meta_recurrences['end_days'] !== null ){
+			 						$ticket_end_days = $ticket_meta_recurrences['end_days'] >= 0 ? '+'. $ticket_meta_recurrences['end_days']: $ticket_meta_recurrences['end_days'];
+			 						$EM_DateTime->setTimestamp($event_dates[$event_id]);
+			 						$ticket_end_date = $EM_DateTime->modify($ticket_end_days.' days')->getDate();
+			 						$ticket['ticket_end'] = "'". $ticket_end_date . ' '. $ticket_meta_recurrences['end_time'] . "'";
+			 					}
+			 				}
+			 				//add insert data
+			 				$meta_inserts[] = "(".implode(",",$ticket).")";
+			 			}
 			 		}
-                 }
+			 		$keys = "(".implode(",",array_keys($ticket)).")";
+			 		$values = implode(',',$meta_inserts);
+			 		$sql = "INSERT INTO ".EM_TICKETS_TABLE." $keys VALUES $values";
+			 		$result = $wpdb->query($sql);
+			 	}
 		 	}elseif( $this->recurring_delete_bookings ){
 		 		//create empty EM_Bookings and EM_Tickets objects to circumvent extra loading of data and SQL queries
 		 		$EM_Bookings = new EM_Bookings();

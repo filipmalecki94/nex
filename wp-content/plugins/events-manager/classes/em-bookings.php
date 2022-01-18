@@ -114,7 +114,7 @@ class EM_Bookings extends EM_Object implements Iterator{
 	 * @param EM_Booking $EM_Booking
 	 * @return boolean
 	 */
-	function add( $EM_Booking , $force_refresh_get_spaces = true){
+	function add( $EM_Booking ){
 		global $wpdb,$EM_Mailer;
 		//Save the booking
 		$email = false;
@@ -122,7 +122,7 @@ class EM_Bookings extends EM_Object implements Iterator{
 		if( empty($EM_Booking->booking_status) ){ //if status is not set, give 1 or 0 depending on approval settings
 			$EM_Booking->booking_status = get_option('dbem_bookings_approval') ? 0:1;
 		}
-		$result = $EM_Booking->save(false, $force_refresh_get_spaces);
+		$result = $EM_Booking->save(false);
 		if($result){
 			//Success
 		    do_action('em_bookings_added', $EM_Booking);
