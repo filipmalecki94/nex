@@ -273,7 +273,7 @@ function showBeforeMore($fullText){
 
 
 function schedule_email_before(int $datetime, int $eventId, array $args) {
-    wp_schedule_single_event($datetime, 'send_email_before', array_merge($args,['event_id' => $eventId]));
+    wp_schedule_single_event($datetime, 'send_email_before', array_merge(['event_id' => $eventId], $args));
 }
 
 function delete_crons_by_event_id(int $eventId)
