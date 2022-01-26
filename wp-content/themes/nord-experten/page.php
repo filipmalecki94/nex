@@ -6,7 +6,7 @@
  */
 
 get_header(); ?>
-
+		<div id="banner-pusher"></div>
 		<main id="content">
 			<?php if ( is_front_page() ) : ?>
 				<div id="carouselTopBanner" class="carousel slide carousel-fade" data-bs-ride="carousel">

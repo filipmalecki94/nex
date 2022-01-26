@@ -130,10 +130,8 @@ function nord_experten_scripts() {
 	wp_enqueue_script( 'popper', 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js', array('jquery'), null, true );
 	//Bootstrap
 	wp_enqueue_script( 'bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js', array('jquery'), null, true );
-
-	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
-		wp_enqueue_script( 'comment-reply' );
-	}
+	//Header after scroll
+    wp_enqueue_script( 'after-scroll', get_template_directory_uri() . '/js/after-scroll.js', array('jquery'), null, true );
 }
 add_action( 'wp_enqueue_scripts', 'nord_experten_scripts' );
 
