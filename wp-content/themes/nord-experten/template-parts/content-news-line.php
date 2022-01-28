@@ -15,7 +15,7 @@
 		    $the_query = new WP_Query( $args );
 	    ?>
 	    <?php if ( $the_query->have_posts() ) : ?>
-            <div class="row justify-content-between">
+            <div class="row justify-content-start">
                 <!-- the loop -->
 			    <?php while ( $the_query->have_posts() ) : $the_query->the_post(); ?>
                     <div class="col-lg-3 col-sm-6 single-news">
